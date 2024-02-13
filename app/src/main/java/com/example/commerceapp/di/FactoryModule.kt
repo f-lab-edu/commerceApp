@@ -12,18 +12,13 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 object FactoryModule {
-//    @Provides
-//    fun provideItemDataSource(itemApi: ItemApi, dispatcher: CoroutineDispatcher): ItemRemoteDataSource {
-//        return ItemRemoteDataSource(itemApi,dispatcher)
-//    }
-
     @Provides
-    fun provideSearchProductsUseCase(repository: ProductRepository):GetSearchProductsUseCase{
+    fun provideSearchProductsUseCase(repository: ProductRepository): GetSearchProductsUseCase {
         return GetSearchProductsUseCase(repository)
     }
 
     @Provides
-    fun provideProductDetailUseCase(repository: ProductRepository):GetProductDetailUseCase{
+    fun provideProductDetailUseCase(repository: ProductRepository): GetProductDetailUseCase {
         return GetProductDetailUseCase(repository)
     }
 

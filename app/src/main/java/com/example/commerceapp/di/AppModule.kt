@@ -18,12 +18,6 @@ import javax.inject.Singleton
 @Module
 object AppModule {
 
-//    @Provides
-//    @Singleton
-//    fun provideItemRepository(itemRemoteDataSource: ItemRemoteDataSource): ItemRepository {
-//        return ItemRepositoryImpl(itemRemoteDataSource)
-//    }
-
     @Provides
     @Singleton
     fun provideProductRepository(firestore: FirebaseFirestore): ProductRepository {
@@ -32,7 +26,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFireStore(): FirebaseFirestore{
+    fun provideFireStore(): FirebaseFirestore {
         return Firebase.firestore
     }
 }

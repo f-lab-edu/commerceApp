@@ -6,6 +6,8 @@ import com.example.commerceapp.data.remote.model.product.Product
 import com.example.commerceapp.data.remote.model.product.ProductDetail
 import com.example.commerceapp.data.remote.model.product.Tag
 import com.example.commerceapp.data.remote.response.ProductSearchResponse
+import com.example.commerceapp.domain.enntity.product.ProductDetailEntity
+import com.example.commerceapp.domain.enntity.product.ProductEntity
 import com.example.commerceapp.domain.repository.ProductRepository
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.Filter
@@ -28,35 +30,31 @@ class ProductRepositoryImpl @Inject constructor(val firestore: FirebaseFirestore
     override fun searchProduct(searchOptions: Map<String, String?>): Flow<ProductSearchResponse> =
         callbackFlow {
             val page = searchOptions["start"]!!.toInt()
+            val queryStr = searchOptions["query"]
+            val pageSize = searchOptions["display"]!!.toLong()
             val listenerRegistration =
-                firestore.collection("products").whereEqualTo("name", "골드 아기천사 큐피트 미니어처").limit(10)
+                firestore.collection("products").limit(pageSize)
                     .addSnapshotListener { value, error ->
                         if (error != null) {
                             close(error) // 혹은 close() 후 return
                         }
-
                         val productsList =
                             value?.documents?.mapNotNull { it.toObject(Product::class.java) }
                         if (!productsList.isNullOrEmpty()) {
                             lastItemKey = productsList.last().id
-                            try {
-                                Timber.tag("TAG")
-                                    .d("productsList => %s", productsList.firstOrNull())
-                                trySend(
-                                    ProductSearchResponse(
-                                        items = productsList,
-                                        start = page
-                                    )
-                                ).isSuccess // Flow에 데이터를 emit
-                            } catch (e: Exception) {
-                                throw e
-                            }
+                            val mappedList = productsList.map { it.mapToProductEntity() }.toList()
+                            trySend(
+                                ProductSearchResponse(
+                                    items = mappedList,
+                                    start = page
+                                )
+                            ).isSuccess // Flow에 데이터를 emit
                         }
                     }
             awaitClose { listenerRegistration.remove() }
         }
 
-    override fun getProductDetail(id: String): Flow<ProductDetail> = callbackFlow {
+    override fun getProductDetail(id: String): Flow<ProductDetailEntity> = callbackFlow {
         val listenerRegistration = firestore.collection("products").limit(1)
             .addSnapshotListener { value, error ->
                 if (error != null) {
@@ -67,7 +65,8 @@ class ProductRepositoryImpl @Inject constructor(val firestore: FirebaseFirestore
                     value?.documents?.mapNotNull { it.toObject(ProductDetail::class.java) }
                 if (productsList != null) {
                     Timber.tag("TAG").d("productsList => %s", productsList.firstOrNull())
-                    productsList.firstOrNull()?.let { trySend(it).isSuccess }
+                    productsList.firstOrNull()
+                        ?.let { trySend(it.mapToProductDetailEntity()).isSuccess }
                 }
             }
         awaitClose { listenerRegistration.remove() }
@@ -92,7 +91,7 @@ class ProductRepositoryImpl @Inject constructor(val firestore: FirebaseFirestore
         awaitClose { listenerRegistration.remove() }
     }
 
-    override fun getCategories(id: String? , name: String?) = callbackFlow {
+    override fun getCategories(id: String?, name: String?) = callbackFlow {
         val dbRef = firestore.collection("category")
         if (id.isNullOrEmpty()) dbRef.whereEqualTo("_id", id)
         if (name.isNullOrEmpty()) dbRef.whereEqualTo("name", name)

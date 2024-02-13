@@ -3,7 +3,7 @@ package com.example.commerceapp.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.commerceapp.data.remote.request.ItemSearchRequest
+import com.example.commerceapp.data.remote.request.ProductSearchRequest
 import com.example.commerceapp.domain.enntity.product.ProductDetailEntity
 import com.example.commerceapp.domain.enntity.product.ProductEntity
 import com.example.commerceapp.domain.usecases.product.GetProductDetailUseCase
@@ -31,11 +31,11 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             delay(1000)
 //            getDetail()
-            getSearchList(ItemSearchRequest())
+            getSearchList(ProductSearchRequest())
         }
     }
 
-    suspend fun getSearchList(request: ItemSearchRequest) {
+    suspend fun getSearchList(request: ProductSearchRequest) {
         viewModelScope.launch {
             Timber.d("getSearchList")
             _uiState.emit(_uiState.value.copy(isLoading = true))
