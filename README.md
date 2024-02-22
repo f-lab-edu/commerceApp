@@ -5,7 +5,7 @@
 - 선정 이유 :
     - 커뮤니티 및 라이브 커머스 기능을 가진 서비스로 확장 시킬 계획
         - 커뮤니티성 기능 및 커머스 기능을 갖춘 오늘의 집 벤치마킹
--	목적 :
+- 목적 :
      - 확장성을 고려한 설계와 좋은 코드 작성 방법을 익히는 것을 목표로 개발
      - jetpack compose + coroutine + flow 를 이용한 상태관리
 
@@ -15,7 +15,7 @@
 
 
 # Architecture
-- 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 ㅎ
+- 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 좋음.
 ### UI layer
 ![Application data flows from the data layer to the ViewModel. UI state
 flows from the ViewModel to the UI elements, and events flow from the UI
@@ -46,7 +46,7 @@ to the rest of the app and depend on the data sources.](https://developer.androi
 - [Timber](https://github.com/JakeWharton/timber) : This is a logger with a small, extensible API which provides utility on top of Android's normal `Log` class.
 
 ## 브랜치 전략
-가장 대표적인 브랜치 전략인 git flow를 사용해보면서
+가장 대표적인 브랜치 전략인 git flow를 사용해보면서 프로덕션 레벨의 이력관리를 경험해보기 위함.
 ### Git Flow (option 1)
 -   master
     -   제품으로 출시될 수 있는 브랜치
@@ -54,10 +54,10 @@ to the rest of the app and depend on the data sources.](https://developer.androi
     -   다음 출시 버전을 개발하는 브랜치
 -   feature
     -   단위 기능을 개발하는 브랜치
-        ~~ -   release ~~
-        ~~    -   이번 출시 버전을 준비하는 브랜치 ~~
-        ~~ -   hotfix  ~~
-        ~~    -   출시 버전에서 발생한 크리티컬한 버그를 긴급 수정하는 브랜치 ~~
+-   release
+    -   이번 출시 버전을 준비하는 브랜치 
+-   hotfix  
+    -   출시 버전에서 발생한 크리티컬한 버그를 긴급 수정하는 브랜치
 
 branch를 merge 할 때는 항상 —no-ff 옵션을 붙여서 branch에 대한 기록이 사라지는 것을 방지하는 것이 원칙
 
@@ -67,17 +67,6 @@ branch를 merge 할 때는 항상 —no-ff 옵션을 붙여서 branch에 대한 
 -   배포를 준비하기 위해 develop에서 release-* 브랜치를 분기
 -   테스트를 진행하면서 발생하는 버그 수정은 release-* 브랜치에 직접 수정 및 반영
 -   테스트가 완료되면 release 브랜치를 master와 develop에 merge
-
-### Gitlab Flow (option 2)
-복잡한 Git Flow와 너무 간단한 Github Flow의 절충안
--   master
--   pre-prodution
-    -   production으로 넘어가기 전의 브랜치
-    -   테스트 등을 담당
--   production
-    -   배포만을 담당
--   새로운 브랜치
-    -   github flow의 새로운 브랜치처럼 사용
 
 ## 주요 기능
 - 회원
