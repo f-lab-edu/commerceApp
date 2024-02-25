@@ -12,8 +12,6 @@ class GetProductDetailUseCase @Inject constructor(
     val repository: ProductRepository
 ) {
     operator fun invoke(id: String): Flow<Result<ProductDetailEntity>> =
-        repository.getProductDetail(id).map {
-            Success<ProductDetailEntity>(it.mapToProductDetailEntity())
-        }
+        repository.getProductDetail(id).map(::Success)
 
 }
