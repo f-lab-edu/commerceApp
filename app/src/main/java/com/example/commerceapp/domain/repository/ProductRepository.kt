@@ -1,11 +1,11 @@
 package com.example.commerceapp.domain.repository
 
-import com.example.commerceapp.domain.model.Product.Brand
-import com.example.commerceapp.domain.model.Product.Category
-import com.example.commerceapp.domain.model.Product.Product
-import com.example.commerceapp.domain.model.Product.ProductDetail
-import com.example.commerceapp.domain.model.Product.Tag
-import com.example.commerceapp.domain.model.RequestParam
+import com.example.commerceapp.domain.model.Brand
+import com.example.commerceapp.domain.model.Category
+import com.example.commerceapp.domain.model.product.Product
+import com.example.commerceapp.domain.model.product.ProductDetail
+import com.example.commerceapp.domain.model.Tag
+import com.example.commerceapp.domain.model.common.RequestParam
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {

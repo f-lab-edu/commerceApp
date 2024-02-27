@@ -1,4 +1,4 @@
-package com.example.commerceapp.domain.model
+package com.example.commerceapp.domain.model.common
 
 enum class ErrorType {
     NO_CONTENT,

@@ -1,4 +1,4 @@
-package com.example.commerceapp.domain.model
+package com.example.commerceapp.domain.model.common
 
 interface RequestParam
 

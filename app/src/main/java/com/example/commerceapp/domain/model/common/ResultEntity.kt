@@ -1,4 +1,4 @@
-package com.example.commerceapp.domain.model
+package com.example.commerceapp.domain.model.common
 
 /**
  * paging된 응답 처리는?

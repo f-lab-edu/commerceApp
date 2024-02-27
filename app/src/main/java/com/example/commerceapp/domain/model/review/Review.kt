@@ -1,4 +1,4 @@
-package com.example.commerceapp.domain.model.Product
+package com.example.commerceapp.domain.model.review
 
 data class Review(
     val id: String,
