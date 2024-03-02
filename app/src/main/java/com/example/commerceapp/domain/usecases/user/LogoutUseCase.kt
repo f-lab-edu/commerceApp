@@ -8,11 +8,10 @@ import com.example.commerceapp.domain.repository.UserRepository
 import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
 
-data class LoginUseCase(
+class LogoutUseCase(
     val repository: UserRepository,
     private val loginExceptionHandler: ErrorHandler
 ) : BaseFlowUseCase<String>() {
     override suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<String>> =
-        repository.login(parameters).mapToResultEntity(loginExceptionHandler)
-
+        repository.logout(parameters).mapToResultEntity(loginExceptionHandler)
 }
