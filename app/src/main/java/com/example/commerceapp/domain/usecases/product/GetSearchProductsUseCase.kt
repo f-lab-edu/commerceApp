@@ -1,19 +1,19 @@
 package com.example.commerceapp.domain.usecases.product
 
-import com.example.commerceapp.domain.Result
-import com.example.commerceapp.domain.Result.Success
-import com.example.commerceapp.data.remote.request.ItemSearchRequest
-import com.example.commerceapp.domain.enntity.product.ProductEntity
+import com.example.commerceapp.domain.extension.mapToResultEntity
+import com.example.commerceapp.domain.model.common.RequestParam
+import com.example.commerceapp.domain.model.common.ResultEntity
+import com.example.commerceapp.domain.model.product.Product
+import com.example.commerceapp.domain.model.product.ProductHandler
 import com.example.commerceapp.domain.repository.ProductRepository
+import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class GetSearchProductsUseCase @Inject constructor(
-    val repository: ProductRepository
-) {
-    operator fun invoke(request: ItemSearchRequest): Flow<Result<List<ProductEntity>>> =
-        repository.searchProduct(request.requestToMap()).map {
-            Result.Success(it.items.map { item -> item.mapToProductEntity() }.toList())
-        }
+    val repository: ProductRepository,
+    private val errorHandler: ProductHandler
+) : BaseFlowUseCase<List<Product>>() {
+    override suspend operator fun invoke(parameters: RequestParam): Flow<ResultEntity<List<Product>>> =
+        repository.searchProduct(parameters).mapToResultEntity(errorHandler)
 }
