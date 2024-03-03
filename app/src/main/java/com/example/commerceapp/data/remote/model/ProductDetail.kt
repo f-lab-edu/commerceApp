@@ -1,14 +1,10 @@
-package com.example.commerceapp.domain.model.product
+package com.example.commerceapp.data.remote.model
 
 import com.example.commerceapp.domain.model.Attribute
-import com.example.commerceapp.domain.model.Brand
-import com.example.commerceapp.domain.model.Category
-import com.example.commerceapp.domain.model.Image
-import com.example.commerceapp.domain.model.Tag
 
 data class ProductDetail(
     val id: String? = null,
-    val attributes: List<Attribute>? = emptyList(),
+    val attributes: List<Attribute>? = emptyList(),정
     val averageReviewScore: Double = 0.0,
     val isBest: Boolean = false,
     val brand: Brand? = null,
