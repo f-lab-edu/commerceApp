@@ -11,7 +11,7 @@ import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
 
 data class GetCartListUseCase(
-    val repository: CartRepository,
+    private val repository: CartRepository,
     private val loginExceptionHandler: ErrorHandler
 ) : BaseFlowUseCase<List<ProductPreview>>() {
     override suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<List<ProductPreview>>> =

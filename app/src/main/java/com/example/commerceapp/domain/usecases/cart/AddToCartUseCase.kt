@@ -10,7 +10,7 @@ import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
 
 data class AddToCartUseCase(
-    val repository: CartRepository,
+    private val repository: CartRepository,
     private val loginExceptionHandler: ErrorHandler
 ) : BaseFlowUseCase<Response>() {
     override suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<Response>> =

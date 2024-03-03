@@ -10,7 +10,7 @@ import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
 
 class GetMyInfoUseCase(
-    val repository: UserRepository,
+    private val repository: UserRepository,
     private val loginExceptionHandler: ErrorHandler
 ) : BaseFlowUseCase<User>() {
     override suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<User>> =
