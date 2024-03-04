@@ -9,11 +9,11 @@ import com.example.commerceapp.domain.response.Response
 import com.example.commerceapp.domain.usecases.base.BaseFlowUseCase
 import kotlinx.coroutines.flow.Flow
 
-class PaymentUseCase(
+class CancelPaymentUseCase(
     private val repository: PaymentRepository,
-    private val loginExceptionHandler: ErrorHandler
+    private val handler: ErrorHandler
 ) : BaseFlowUseCase<Response>() {
     override suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<Response>> =
-        repository.cancelPayment(parameters).mapToResultEntity(loginExceptionHandler)
+        repository.cancelPayment(parameters).mapToResultEntity(handler)
 
 }
