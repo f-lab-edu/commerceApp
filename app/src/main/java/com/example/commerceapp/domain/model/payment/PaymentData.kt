@@ -8,14 +8,14 @@ import com.example.commerceapp.data.remote.model.payment.VbankData
 
 data class PaymentData(
     val bankData: BankData,
-    val cancelledAt: Any,
+    val cancelledAt: String,
     val cancelledPrice: Int,
     val cancelledTaxFree: Int,
     val cardData: CardData,
     val companyName: String,
     val currency: String,
-    val escrowStatus: Any,
-    val escrowStatusLocale: Any,
+    val escrowStatus: Int,
+    val escrowStatusLocale: String,
     val gatewayUrl: String,
     val metadata: Metadata,
     val method: String,
