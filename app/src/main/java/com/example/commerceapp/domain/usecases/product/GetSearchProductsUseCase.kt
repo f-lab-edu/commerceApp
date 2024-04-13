@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetSearchProductsUseCase @Inject constructor(
-    private val repository: ProductRepository,
+    private val repository: ProductRepository<RequestParam>,
     private val errorHandler: ProductHandler
 ) : BaseFlowUseCase<List<ProductPreview>>() {
     override suspend operator fun invoke(parameters: RequestParam): Flow<ResultEntity<List<ProductPreview>>> =

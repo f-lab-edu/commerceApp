@@ -14,4 +14,5 @@ data class ProductPreview(
     val name: String = "",
     val productNo: String? = null,
     val salePrice: Int = 0,
+    val bookMark:Boolean = false
 )
