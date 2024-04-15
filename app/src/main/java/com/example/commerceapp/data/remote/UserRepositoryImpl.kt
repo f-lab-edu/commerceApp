@@ -1,10 +1,11 @@
 package com.example.commerceapp.data.remote
 
-import com.example.commerceapp.domain.model.common.RequestParam
+import com.example.commerceapp.domain.model.common.request.AddresseeParam
+import com.example.commerceapp.domain.model.common.request.UserUpdateParam
+import com.example.commerceapp.domain.model.user.Addressee
 import com.example.commerceapp.domain.model.user.User
 import com.example.commerceapp.domain.model.user.UserPreview
 import com.example.commerceapp.domain.repository.UserRepository
-import com.example.commerceapp.domain.response.Response
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
@@ -12,29 +13,27 @@ import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
-    UserRepository<UserRepositoryImpl.UserParam> {
+    UserRepository {
 
-    class UserParam(val id: String) : RequestParam
-
-    override fun getMyInfo(requestParam: UserParam): Flow<User> {
-        return firestore.collection("users").whereEqualTo("id", requestParam.id).snapshots()
+    override suspend fun getMyInfo(id: String): Flow<User> {
+        return firestore.collection("users").whereEqualTo("id", id).snapshots()
             .mapNotNull { it.toObjects(User::class.java).firstOrNull() }
     }
 
 
-    override fun getMyPreviewInfo(requestParam: UserParam): Flow<UserPreview> {
-        return firestore.collection("users").whereEqualTo("id", requestParam.id).snapshots()
+    override suspend fun getMyPreviewInfo(id: String): Flow<UserPreview> {
+        return firestore.collection("users").whereEqualTo("id", id).snapshots()
             .mapNotNull { it.toObjects(UserPreview::class.java).firstOrNull() }
     }
 
     /**
      * TODO : 추후 구현 예정
      */
-    override fun updateMyInfo(requestParam: RequestParam): Flow<Response> {
+    override suspend fun updateMyInfo(param: UserUpdateParam): Flow<User> {
         TODO("Not yet implemented")
     }
 
-    override fun addAddressee(requestParam: RequestParam): Flow<Response> {
+    override suspend fun addAddressee(param: AddresseeParam): Flow<Addressee> {
         TODO("Not yet implemented")
     }
 }
