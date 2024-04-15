@@ -8,6 +8,5 @@ data class Addressee(
     val baseAddress: String,
     val detailAddress: String,
     val roadNameYn: String,
-    val tel: String,
-    val primary: String
+    val tel: String
 )

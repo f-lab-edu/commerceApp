@@ -1,5 +1,7 @@
 package com.example.commerceapp.data.remote
 
+import com.example.commerceapp.data.remote.model.UserDto
+import com.example.commerceapp.data.remote.model.UserPreviewDto
 import com.example.commerceapp.domain.model.common.request.AddresseeParam
 import com.example.commerceapp.domain.model.common.request.UserUpdateParam
 import com.example.commerceapp.domain.model.user.Addressee
@@ -17,13 +19,13 @@ class UserRepositoryImpl @Inject constructor(private val firestore: FirebaseFire
 
     override suspend fun getMyInfo(id: String): Flow<User> {
         return firestore.collection("users").whereEqualTo("id", id).snapshots()
-            .mapNotNull { it.toObjects(User::class.java).firstOrNull() }
+            .mapNotNull { it.toObjects(UserDto::class.java).firstOrNull()?.mapToEntity() }
     }
 
 
     override suspend fun getMyPreviewInfo(id: String): Flow<UserPreview> {
         return firestore.collection("users").whereEqualTo("id", id).snapshots()
-            .mapNotNull { it.toObjects(UserPreview::class.java).firstOrNull() }
+            .mapNotNull { it.toObjects(UserPreviewDto::class.java).firstOrNull()?.mapToEntity() }
     }
 
     /**
