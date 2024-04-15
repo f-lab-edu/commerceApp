@@ -19,7 +19,7 @@ data class ProductPreviewDto(
     val isThirdPart: Boolean = false,
     val productVerticalSmallUrl: String = ""
 ) {
-    fun mapToProductPreview(): ProductPreview {
+    fun mapToEntity(): ProductPreview {
         return ProductPreview(
             retailPrice,
             basePrice,

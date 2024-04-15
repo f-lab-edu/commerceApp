@@ -76,6 +76,6 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
     }
 
     private fun convertToProductList(dtos: List<ProductPreviewDto>): List<ProductPreview> {
-        return dtos.map { it.mapToProductPreview() }
+        return dtos.map { it.mapToEntity() }
     }
 }
