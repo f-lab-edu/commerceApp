@@ -17,17 +17,21 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
-class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
+class ProductRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val productMapper: ProductMapper,
+    private val productPreMapper: ProductPreviewMapper
+) :
     ProductRepository {
 
     override suspend fun productSearchByBrand(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("products")
+        return firestore.collection("product")
             .whereEqualTo("brand", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
     override suspend fun productSearchByCategory(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("products")
+        return firestore.collection("product")
             .whereEqualTo("category", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
@@ -52,7 +56,7 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         return collectionRef.whereEqualTo("_id", id).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
                 snapshot.firstOrNull()?.toObject(ProductDto::class.java)
-                    ?.let { ProductMapper.mapToProduct(it) }
+                    ?.let { productMapper.mapToProduct(it) }
             }
     }
 
@@ -79,6 +83,6 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
     }
 
     private fun convertToProductList(dtos: List<ProductPreviewDto>): List<ProductPreview> {
-        return dtos.map { ProductPreviewMapper.mapToEntity(it) }
+        return dtos.map { productPreMapper.mapToEntity(it) }
     }
 }

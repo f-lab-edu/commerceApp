@@ -3,7 +3,7 @@ package com.example.commerceapp.data.remote.model.mapper
 import com.example.commerceapp.data.remote.model.ProductDto
 import com.example.commerceapp.domain.model.product.Product
 
-object ProductMapper {
+class ProductMapper {
     fun mapToProduct(dto: ProductDto): Product {
         return Product(
             dto.retailPrice,
