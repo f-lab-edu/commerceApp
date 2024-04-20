@@ -6,6 +6,6 @@ import com.squareup.moshi.JsonClass
 data class UserPreviewDto(
     val id: String,
     val name: String,
-    val email: String,
+    val email: String = "",
     val profile: String = ""
 )

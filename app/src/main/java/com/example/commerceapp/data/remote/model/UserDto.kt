@@ -7,11 +7,13 @@ import com.squareup.moshi.JsonClass
 data class UserDto(
     val id: String,
     val name: String,
-    val age: Int,
-    val email: String,
-    val phoneNo: String,
-    val profile: String,
+    val age: Int = 0,
+    val email: String = "",
+    val phoneNo: String = "",
+    val profile: String = "",
     val addressee: List<AddresseeDto> = emptyList(),
     val orderList: List<OrderPreview> = emptyList(),
     val wishList: List<ProductPreviewDto> = emptyList()
-)
+) {
+    constructor() : this(id = "", name = "")
+}

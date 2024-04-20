@@ -1,9 +1,7 @@
 package com.example.commerceapp.data.remote
 
 import com.example.commerceapp.data.remote.model.UserDto
-import com.example.commerceapp.data.remote.model.UserPreviewDto
 import com.example.commerceapp.data.remote.model.mapper.UserMapper
-import com.example.commerceapp.data.remote.model.mapper.UserPreviewMapper
 import com.example.commerceapp.domain.model.common.request.AddresseeParam
 import com.example.commerceapp.domain.model.common.request.UserUpdateParam
 import com.example.commerceapp.domain.model.user.Addressee
@@ -16,22 +14,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
+class UserRepositoryImpl @Inject constructor(
+    private var firestore: FirebaseFirestore,
+    private val userMapper: UserMapper
+) :
     UserRepository {
 
     override suspend fun getMyInfo(id: String): Flow<User> {
         val snapshot = firestore.collection("users").whereEqualTo("id", id).snapshots()
         return snapshot.mapNotNull {
             val userDto = it.toObjects(UserDto::class.java).firstOrNull()
-            userDto?.let { dto -> UserMapper.mapToEntity(dto) }
+            userDto?.let { dto -> userMapper.mapToEntity(dto) }
         }
     }
 
     override suspend fun getMyPreviewInfo(id: String): Flow<UserPreview> {
         val snapshot = firestore.collection("users").whereEqualTo("id", id).snapshots()
         return snapshot.mapNotNull {
-            val userDto = it.toObjects(UserPreviewDto::class.java).firstOrNull()
-            userDto?.let { dto -> UserPreviewMapper.mapToEntity(dto) }
+            val userDto = it.toObjects(UserDto::class.java).firstOrNull()
+            userDto?.let { dto -> userMapper.mapToPreview(dto) }
         }
     }
 
