@@ -17,4 +17,6 @@ data class ProductPreviewDto(
     val adultVerificationFailed: Boolean = false,
     val isThirdPart: Boolean = false,
     val productVerticalSmallUrl: String = ""
-)
+) {
+    constructor() : this(no="", name = "") // Empty constructor
+}

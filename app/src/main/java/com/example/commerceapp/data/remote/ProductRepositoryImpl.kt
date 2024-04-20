@@ -34,7 +34,7 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
 
     override suspend fun searchProduct(searchParam: ProductSearchParam): Flow<List<ProductPreview>> {
         return if (searchParam.keyword.isNotBlank()) {
-            firestore.collection("products")
+            firestore.collection("product")
                 .whereArrayContainsAny("name", listOf("*${searchParam.keyword}*"))
                 .whereArrayContainsAny("brand", listOf("*${searchParam.keyword}*"))
                 .whereArrayContainsAny("tags", listOf("*${searchParam.keyword}*"))
