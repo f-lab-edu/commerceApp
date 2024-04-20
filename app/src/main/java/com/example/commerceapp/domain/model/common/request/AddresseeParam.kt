@@ -1,6 +1,6 @@
-package com.example.commerceapp.domain.model.user
+package com.example.commerceapp.domain.model.common.request
 
-data class Addressee(
+data class AddresseeParam(
     val uid: String,
     val addressName: String,
     val receiverName: String,
@@ -8,5 +8,6 @@ data class Addressee(
     val baseAddress: String,
     val detailAddress: String,
     val roadNameYn: String,
-    val tel: String
+    val tel: String,
+    val primary: String
 )

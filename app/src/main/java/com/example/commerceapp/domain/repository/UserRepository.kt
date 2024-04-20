@@ -1,14 +1,15 @@
 package com.example.commerceapp.domain.repository
 
-import com.example.commerceapp.domain.model.common.RequestParam
+import com.example.commerceapp.domain.model.common.request.AddresseeParam
+import com.example.commerceapp.domain.model.common.request.UserUpdateParam
+import com.example.commerceapp.domain.model.user.Addressee
 import com.example.commerceapp.domain.model.user.User
 import com.example.commerceapp.domain.model.user.UserPreview
-import com.example.commerceapp.domain.response.Response
 import kotlinx.coroutines.flow.Flow
 
 interface UserRepository {
-    fun getMyInfo(requestParam: RequestParam): Flow<User>
-    fun getMyPreviewInfo(requestParam: RequestParam): Flow<UserPreview>
-    fun updateMyInfo(requestParam: RequestParam): Flow<Response>
-    fun addAddressee(requestParam: RequestParam): Flow<Response>
+    suspend fun getMyInfo(id: String): Flow<User>
+    suspend fun getMyPreviewInfo(id: String): Flow<UserPreview>
+    suspend fun updateMyInfo(param: UserUpdateParam): Flow<User>
+    suspend fun addAddressee(param: AddresseeParam): Flow<Addressee>
 }
