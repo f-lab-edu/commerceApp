@@ -2,6 +2,8 @@ package com.example.commerceapp.data.remote
 
 import com.example.commerceapp.data.remote.model.ProductDto
 import com.example.commerceapp.data.remote.model.ProductPreviewDto
+import com.example.commerceapp.data.remote.model.mapper.ProductMapper
+import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.domain.model.Brand
 import com.example.commerceapp.domain.model.Category
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
@@ -49,7 +51,8 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         val collectionRef = db.collection("products")
         return collectionRef.whereEqualTo("_id", id).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
-                snapshot.firstOrNull()?.toObject(ProductDto::class.java)?.mapToProduct()
+                snapshot.firstOrNull()?.toObject(ProductDto::class.java)
+                    ?.let { ProductMapper.mapToProduct(it) }
             }
     }
 
@@ -76,6 +79,6 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
     }
 
     private fun convertToProductList(dtos: List<ProductPreviewDto>): List<ProductPreview> {
-        return dtos.map { it.mapToEntity() }
+        return dtos.map { ProductPreviewMapper.mapToEntity(it) }
     }
 }
