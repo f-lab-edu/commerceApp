@@ -9,6 +9,7 @@ data class User(
     val age: Int,
     val email: String,
     val phoneNo: String,
+    val profile: String,
     val addressee: List<Addressee>,
     val orderList: List<OrderPreview>,
     val wishList: List<ProductPreview>

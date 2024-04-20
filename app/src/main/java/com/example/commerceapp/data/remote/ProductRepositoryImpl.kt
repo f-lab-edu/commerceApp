@@ -2,6 +2,8 @@ package com.example.commerceapp.data.remote
 
 import com.example.commerceapp.data.remote.model.ProductDto
 import com.example.commerceapp.data.remote.model.ProductPreviewDto
+import com.example.commerceapp.data.remote.model.mapper.ProductMapper
+import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.domain.model.Brand
 import com.example.commerceapp.domain.model.Category
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
@@ -15,24 +17,28 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
-class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseFirestore) :
+class ProductRepositoryImpl @Inject constructor(
+    private val firestore: FirebaseFirestore,
+    private val productMapper: ProductMapper,
+    private val productPreMapper: ProductPreviewMapper
+) :
     ProductRepository {
 
     override suspend fun productSearchByBrand(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("products")
+        return firestore.collection("product")
             .whereEqualTo("brand", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
     override suspend fun productSearchByCategory(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("products")
+        return firestore.collection("product")
             .whereEqualTo("category", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
     override suspend fun searchProduct(searchParam: ProductSearchParam): Flow<List<ProductPreview>> {
         return if (searchParam.keyword.isNotBlank()) {
-            firestore.collection("products")
+            firestore.collection("product")
                 .whereArrayContainsAny("name", listOf("*${searchParam.keyword}*"))
                 .whereArrayContainsAny("brand", listOf("*${searchParam.keyword}*"))
                 .whereArrayContainsAny("tags", listOf("*${searchParam.keyword}*"))
@@ -49,7 +55,8 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
         val collectionRef = db.collection("products")
         return collectionRef.whereEqualTo("_id", id).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
-                snapshot.firstOrNull()?.toObject(ProductDto::class.java)?.mapToProduct()
+                snapshot.firstOrNull()?.toObject(ProductDto::class.java)
+                    ?.let { productMapper.mapToProduct(it) }
             }
     }
 
@@ -76,6 +83,6 @@ class ProductRepositoryImpl @Inject constructor(private val firestore: FirebaseF
     }
 
     private fun convertToProductList(dtos: List<ProductPreviewDto>): List<ProductPreview> {
-        return dtos.map { it.mapToEntity() }
+        return dtos.map { productPreMapper.mapToEntity(it) }
     }
 }

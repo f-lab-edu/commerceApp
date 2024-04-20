@@ -1,6 +1,5 @@
 package com.example.commerceapp.data.remote.model
 
-import com.example.commerceapp.domain.model.product.ProductPreview
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -19,19 +18,5 @@ data class ProductPreviewDto(
     val isThirdPart: Boolean = false,
     val productVerticalSmallUrl: String = ""
 ) {
-    fun mapToEntity(): ProductPreview {
-        return ProductPreview(
-            retailPrice,
-            basePrice,
-            discountedPrice,
-            discountRate,
-            expirationDate,
-            isSoldOut,
-            mainImageUrl,
-            name,
-            no,
-            reviewCount,
-            adultVerificationFailed
-        )
-    }
+    constructor() : this(no="", name = "") // Empty constructor
 }

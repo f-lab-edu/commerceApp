@@ -1,6 +1,5 @@
 package com.example.commerceapp.data.remote.model
 
-import com.example.commerceapp.domain.model.product.Product
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -23,27 +22,4 @@ data class ProductDto(
     val masterProductCode: String = "",
     val masterProductName: String = "",
     val dealProducts: List<String> = emptyList()
-) {
-    fun mapToProduct(): Product {
-        return Product(
-            retailPrice,
-            basePrice,
-            discountedPrice,
-            discountRate,
-            expirationDate,
-            isSoldOut,
-            mainImageUrl,
-            name,
-            no,
-            reviewCount,
-            shortDescription,
-            sellerName,
-            adultVerificationFailed,
-            isThirdPart,
-            productVerticalSmallUrl,
-            masterProductCode,
-            masterProductName,
-            dealProducts
-        )
-    }
-}
+)

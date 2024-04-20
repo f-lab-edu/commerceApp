@@ -4,8 +4,8 @@ import com.example.commerceapp.domain.extension.toErrorType
 import com.example.commerceapp.domain.model.common.ErrorHandler
 import com.example.commerceapp.domain.model.common.ResultEntity
 
-class ProductHandler : ErrorHandler {
-    override fun <Product> handle(throwable: Throwable): ResultEntity.Error<Product> {
+class ProductPreviewHandler : ErrorHandler {
+    override fun <ProductPreview> handle(throwable: Throwable): ResultEntity.Error<ProductPreview> {
         return ResultEntity.Error(
             error = throwable.toErrorType(),
             message = throwable.message ?: throwable.stackTraceToString()
