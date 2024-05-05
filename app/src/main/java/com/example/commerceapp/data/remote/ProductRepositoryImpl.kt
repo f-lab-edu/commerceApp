@@ -21,8 +21,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val productMapper: ProductMapper,
     private val productPreMapper: ProductPreviewMapper
-) :
-    ProductRepository {
+) : ProductRepository {
 
     override suspend fun productSearchByBrand(keyword: String): Flow<List<ProductPreview>> {
         return firestore.collection("product")
@@ -38,25 +37,24 @@ class ProductRepositoryImpl @Inject constructor(
 
     override suspend fun searchProduct(searchParam: ProductSearchParam): Flow<List<ProductPreview>> {
         return if (searchParam.keyword.isNotBlank()) {
-            firestore.collection("product")
-                .whereArrayContainsAny("name", listOf("*${searchParam.keyword}*"))
-                .whereArrayContainsAny("brand", listOf("*${searchParam.keyword}*"))
-                .whereArrayContainsAny("tags", listOf("*${searchParam.keyword}*"))
-                .limit(20).snapshots()
+            firestore.collection("product").snapshots()
                 .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
+                .map {
+                    it.filter { it.name.contains(searchParam.keyword) }
+                }
         } else {
-            firestore.collection("products").limit(20).snapshots()
+            firestore.collection("product").limit(20).snapshots()
                 .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
         }
     }
 
     override suspend fun getProduct(id: String): Flow<Product> {
         val db = FirebaseFirestore.getInstance()
-        val collectionRef = db.collection("products")
-        return collectionRef.whereEqualTo("_id", id).snapshots()
+        val collectionRef = db.collection("product")
+        return collectionRef.whereEqualTo("no", id.toLong()).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
                 snapshot.firstOrNull()?.toObject(ProductDto::class.java)
-                    ?.let { productMapper.mapToProduct(it) }
+                    ?.let { productMapper.mapToProduct(it) }?: throw Exception("데이터가 없습니다.")
             }
     }
 

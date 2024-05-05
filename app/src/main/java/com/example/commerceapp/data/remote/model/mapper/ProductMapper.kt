@@ -6,24 +6,24 @@ import com.example.commerceapp.domain.model.product.Product
 class ProductMapper {
     fun mapToProduct(dto: ProductDto): Product {
         return Product(
-            dto.retailPrice,
-            dto.basePrice,
-            dto.discountedPrice,
-            dto.discountRate,
-            dto.expirationDate,
-            dto.isSoldOut,
-            dto.mainImageUrl,
-            dto.name,
-            dto.no,
-            dto.reviewCount,
-            dto.shortDescription,
-            dto.sellerName,
-            dto.adultVerificationFailed,
-            dto.isThirdPart,
-            dto.productVerticalSmallUrl,
-            dto.masterProductCode,
-            dto.masterProductName,
-            dto.dealProducts
+            dto.retailPrice ?: 0,
+            dto.basePrice ?: 0,
+            dto.discountedPrice ?: 0,
+            dto.discountRate ?: 0.0,
+            dto.expirationDate ?: "",
+            dto.isSoldOut ?: false,
+            dto.mainImageUrl ?: "",
+            dto.name.toString() ?: "",
+            dto.no.toString() ?: "",
+            dto.reviewCount ?: 0,
+            dto.shortDescription ?: "",
+            dto.sellerName ?: "",
+            dto.adultVerificationFailed ?: false,
+            dto.isThirdPart ?: false,
+            dto.productVerticalSmallUrl ?: "",
+            dto.masterProductCode ?: "",
+            dto.masterProductName ?: "",
+            emptyList()
         )
     }
 
@@ -37,7 +37,7 @@ class ProductMapper {
             product.isSoldOut,
             product.mainImageUrl,
             product.name,
-            product.no,
+            product.no.toLong(),
             product.reviewCount,
             product.shortDescription,
             product.sellerName,
@@ -46,7 +46,7 @@ class ProductMapper {
             product.productVerticalSmallUrl,
             product.masterProductCode,
             product.masterProductName,
-            product.dealProducts
+            emptyList()
         )
     }
 }
