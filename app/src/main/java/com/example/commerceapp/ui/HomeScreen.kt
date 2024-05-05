@@ -36,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +44,6 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.ProductPreview
-import java.text.DecimalFormat
 
 @Composable
 fun HomeScreen() {
@@ -53,75 +51,24 @@ fun HomeScreen() {
     val uiState = viewModel.uiState.collectAsState()
     LazyColumn(Modifier.background(Color.White)) {
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Text(
-                    text = "Page title",
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(1000)
-                )
-                IconButton(onClick = { /*TODO*/ }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic__shopping_cart),
-                        contentDescription = "장바구니"
-                    )
-                }
-            }
-        }
-        item {
+            HomeAppbar()
             Divider(height = 8.dp)
+            HeaderSection()
         }
-        item {
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-
-                Row(
-                    Modifier
-                        .padding(top = 4.dp, bottom = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "오늘의 할인상품",
-                        style = TextStyle(
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight(1000)
-                        ),
-                        color = colorResource(id = R.color.text_black),
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = { /*TODO*/ }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic__right_arrow),
-                            contentDescription = "더보기"
-                        )
-                    }
-                }
-            }
-            if (uiState.value.isLoading) {
-                ProgressIndicator()
-            } else if (uiState.value.eventProducts.isNotEmpty()) {
-                EventProductList(products = uiState.value.eventProducts)
-            } else {
-                EmptyProductList()
-            }
+        if (uiState.value.isLoading) {
+            item { ProgressIndicator() }
+        } else if (uiState.value.eventProducts.isNotEmpty()) {
+            item { EventProductList(products = uiState.value.eventProducts) }
+        } else {
+            item { EmptyProductList() }
         }
-
         item {
             Divider(height = 16.dp)
         }
-
         if (uiState.value.isLoading) {
             item { ProgressIndicator() }
         } else if (uiState.value.products.isNotEmpty()) {
-            itemsIndexed(uiState.value.products.chunked(2)) { index, rowProducts ->
+            itemsIndexed(uiState.value.products.chunked(2)) { _, rowProducts ->
                 BoxWithConstraints() {
                     val half = this.maxWidth / 2
                     Row(
@@ -138,6 +85,57 @@ fun HomeScreen() {
             }
         } else {
             item { EmptyProductList() }
+        }
+    }
+}
+
+@Composable
+private fun HomeAppbar() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = "Page title",
+            modifier = Modifier.align(Alignment.CenterVertically),
+            fontSize = 20.sp,
+            fontWeight = FontWeight(1000)
+        )
+        IconButton(onClick = { /*TODO*/ }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic__shopping_cart),
+                contentDescription = "장바구니"
+            )
+        }
+    }
+}
+
+@Composable
+fun HeaderSection() {
+    Column(Modifier.padding(8.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "오늘의 할인상품",
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold // 수정된 FontWeight 값
+                ),
+                color = colorResource(id = R.color.text_black),
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(onClick = { /*TODO*/ }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic__right_arrow),
+                    contentDescription = "더보기"
+                )
+            }
         }
     }
 }
@@ -219,7 +217,6 @@ fun EventItemCard(productPreview: ProductPreview) {
             )
         }
     }
-
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -299,95 +296,3 @@ fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
     }
 }
 
-
-@Preview(showBackground = true, backgroundColor = 0xFFF0F0F0)
-@OptIn(ExperimentalGlideComposeApi::class)
-@Composable
-fun PreviewItemCard() {
-    val productPreview = ProductPreview(
-        retailPrice = 61000,
-        basePrice = 41900,
-        discountedPrice = 0,
-        discountRate = 31.0,
-        expirationDate = "",
-        isSoldOut = false,
-        mainImageUrl = "https://3p-image.kurly.com/files/20231124/ec626c15-ccc1-41d9-9230-39da535ce6ba.jpg",
-        name = "[샤이닝홈] 그루인 애쉬드 원형 원목 스툴 320x320 내추럴",
-        no = "1000336967",
-        reviewCount = 0,
-        adultVerificationFailed = false
-    )
-
-    Column {
-        GlideImage(
-            modifier = Modifier
-                .size(180.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            model = productPreview.mainImageUrl,
-            contentDescription = "상품사진",
-            contentScale = ContentScale.Crop
-        )
-        Text(
-            text = productPreview.name.split(" ")[0],
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
-            modifier = Modifier.padding(top = 8.dp),
-            color = colorResource(id = R.color.text_light_gray)
-        )
-        Text(
-            text = productPreview.name,
-            style = TextStyle(fontSize = 16.sp, color = Color.Black),
-            maxLines = 1,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-        Row(
-            Modifier.padding(top = 8.dp, bottom = 8.dp)
-        ) {
-            Text(
-                text = "${productPreview.discountRate}%  ",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(1000)
-                ),
-                color = colorResource(id = R.color.blue_01),
-            )
-            Text(
-                text = insertComma(productPreview.retailPrice),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight(1000)
-                )
-            )
-        }
-        Row(
-            Modifier.padding(bottom = 8.dp)
-        ) {
-            Button(
-                onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01)
-                ),
-                modifier = Modifier
-                    .padding(0.dp)
-                    .height(25.dp)
-                    .width(35.dp),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Text(
-                    text = "특가",
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(0.dp),
-                    style = TextStyle(lineHeight = 16.sp)
-                )
-            }
-        }
-    }
-}
-
-fun insertComma(number: Int): String {
-    val formatter = DecimalFormat("#,###")
-    return formatter.format(number)
-}
