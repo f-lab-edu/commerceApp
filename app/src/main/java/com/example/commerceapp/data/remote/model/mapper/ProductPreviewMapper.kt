@@ -6,17 +6,17 @@ import com.example.commerceapp.domain.model.product.ProductPreview
 class ProductPreviewMapper {
     fun mapToEntity(dto: ProductPreviewDto): ProductPreview {
         return ProductPreview(
-            dto.retailPrice,
-            dto.basePrice,
-            dto.discountedPrice,
-            dto.discountRate,
+            dto.retailPrice ?: 0,
+            dto.basePrice ?: 0,
+            dto.discountedPrice ?: 0,
+            dto.discountRate ?: 0.0,
             dto.expirationDate,
-            dto.isSoldOut,
-            dto.mainImageUrl,
-            dto.name,
-            dto.no,
-            dto.reviewCount,
-            dto.adultVerificationFailed
+            dto.isSoldOut ?: false,
+            dto.mainImageUrl ?: "",
+            dto.name ?: "",
+            dto.no.toString(),
+            dto.reviewCount ?: 0,
+            dto.adultVerificationFailed ?: false
         )
     }
 
@@ -30,7 +30,7 @@ class ProductPreviewMapper {
             entity.isSoldOut,
             entity.mainImageUrl,
             entity.name,
-            entity.no,
+            entity.no.toLong(),
             entity.reviewCount,
             entity.adultVerificationFailed
         )
