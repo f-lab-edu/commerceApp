@@ -1,3 +1,4 @@
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,8 +20,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        testHandleProfiling = true
-        testFunctionalTest = true
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -44,69 +43,89 @@ android {
         kotlinCompilerExtensionVersion = "1.5.5"
     }
     packaging {
-        resources.excludes.addAll(
-            listOf(
-                "META-INF/LICENSE.md",
-                "META-INF/LICENSE-notice.md"
-        )
-        )
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
 
 dependencies {
 
+    implementation("androidx.core:core-ktx:1.9.0")
+
+    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-ktx:1.8.2")
 
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
-    implementation("androidx.core:core-ktx:1.9.0")
-    implementation("androidx.activity:activity-compose:1.5.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.5.0-alpha01")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.5.0-alpha01")
-    implementation("androidx.test.ext:junit-ktx:1.1.5")
-    ksp("androidx.lifecycle:lifecycle-common:2.5.0-alpha01")
     implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-tooling-preview")  // 개발 모드에서만 필요
+    implementation("androidx.compose.ui:ui-graphics")
+    implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material:1.6.1")
 
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation("androidx.compose.ui:ui")
 
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    val lifecycle_version = "2.7.0"
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    ksp("androidx.lifecycle:lifecycle-common:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     implementation("com.google.dagger:hilt-android:2.48")
     ksp("com.google.dagger:hilt-android-compiler:2.48")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")// Navigation Compose와 함께 Hilt 사용 시
-    implementation("androidx.hilt:hilt-navigation-fragment:1.0.0")  // Fragment 기반 Navigation과 함께 Hilt 사용 시
 
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    val nav_version = "2.7.6"
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("androidx.hilt:hilt-navigation-fragment:1.1.0")
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    val lottieVersion = "6.3.0"
+    implementation("com.airbnb.android:lottie:$lottieVersion")
+
+    val timberVersion = "5.0.1"
+    implementation("com.jakewharton.timber:timber:$timberVersion")
+
+    // Import the BoM for the Firebase platform
+    implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
-    implementation(platform("com.squareup.okhttp3:okhttp-bom:5.0.0-alpha.2"))
+    implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    val retrofitVersion = "2.9.0"
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+
+    val glideVersion = "4.16.0"
+    implementation("com.github.bumptech.glide:glide:$glideVersion")
 
     implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-
-    val mockkVersion = "1.13.10"
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:$mockkVersion")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
-    testImplementation("com.google.dagger:hilt-android-testing:2.48")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.6")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("io.mockk:mockk-android:$mockkVersion") // 사용하는 버전에 맞게 x.x를 수정하세요.
-    androidTestImplementation("com.google.firebase:firebase-firestore:24.11.1")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")
 }
