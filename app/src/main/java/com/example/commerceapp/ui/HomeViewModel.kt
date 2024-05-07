@@ -1,6 +1,5 @@
 package com.example.commerceapp.ui
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commerceapp.domain.model.common.ResultEntity
@@ -8,19 +7,36 @@ import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.ProductPreview
 import com.example.commerceapp.domain.usecases.product.SearchProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val searchProduct: SearchProductsUseCase,
+    private val searchProduct: SearchProductsUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(UiState(false, emptyList(), emptyList()))
-    val uiState: StateFlow<UiState> = _uiState
+    private val _eventProducts = MutableStateFlow<List<ProductPreview>>(emptyList())
+    private val _products = MutableStateFlow<List<ProductPreview>>(emptyList())
+
+    val homeUiState: StateFlow<HomeUiState> =
+        combine(_eventProducts, _products) { events, products ->
+            HomeUiState(isLoading = false, products = products, eventProducts = events)
+        }.stateIn(
+            scope = viewModelScope,
+            initialValue = HomeUiState(
+                true,
+                emptyList(),
+                emptyList()
+            ),
+            started = SharingStarted.WhileSubscribed()
+        )
 
     init {
         fetchProducts()
@@ -28,67 +44,62 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun fetchProducts(keyword: String = "", page: Int = 1) {
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(isLoading = true)
-            searchProduct.invoke(
-                ProductSearchParam(
-                    keyword = keyword,
-                    page = page,
-                    pagePerSize = 20
-                )
-            ).collectLatest {
-                when (it) {
-                    is ResultEntity.Success -> {
-                        Log.d("HomeViewModel", "Success ${it.data.size}")
-                        Log.d("HomeViewModel", "item ${it.data.get(0)}")
-                        _uiState.value = uiState.value.copy(
-                            isLoading = false,
-                            products = it.data
-                        )
-                    }
-
-                    is ResultEntity.Error -> {
-                        _uiState.value = uiState.value.copy(
-                            isLoading = false
-                        )
-                    }
-                }
-            }
-        }
+        val param = ProductSearchParam(
+            keyword = keyword,
+            page = page,
+            pagePerSize = 20
+        )
+        handleFlowResponse(
+            searchProduct,
+            param,
+            { _products.value = it },
+            { /* 에러 처리*/ },
+            viewModelScope
+        )
     }
 
     private fun fetchEventProducts() {
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(isLoading = true)
-            searchProduct.invoke(
-                ProductSearchParam(
-                    keyword = "샤이닝홈",
-                    page = 1,
-                    pagePerSize = 5
-                )
-            ).collectLatest {
+        val param = ProductSearchParam(
+            keyword = "샤이닝홈",
+            page = 1,
+            pagePerSize = 5
+        )
+
+        handleFlowResponse(
+            searchProduct,
+            param,
+            { _eventProducts.value = it },
+            { /* 에러 처리*/ },
+            viewModelScope
+        )
+    }
+
+    private fun handleFlowResponse(
+        useCase: SearchProductsUseCase,
+        parameter: ProductSearchParam,
+        onSuccess: (List<ProductPreview>) -> Unit,
+        onError: (String) -> Unit,
+        scope: CoroutineScope
+    ) {
+        scope.launch {
+            useCase.invoke(parameter).collectLatest {
                 when (it) {
                     is ResultEntity.Success -> {
-                        Log.d("HomeViewModel", "Success ${it.data.size}")
-                        _uiState.value = uiState.value.copy(
-                            isLoading = false,
-                            eventProducts = it.data
-                        )
+                        onSuccess(it.data)
                     }
 
                     is ResultEntity.Error -> {
-                        _uiState.value = uiState.value.copy(
-                            isLoading = false
-                        )
+                        onError(it.message)
                     }
                 }
             }
         }
     }
+
+    data class HomeUiState(
+        val isLoading: Boolean,
+        val products: List<ProductPreview>,
+        val eventProducts: List<ProductPreview>
+    )
 }
 
-data class UiState(
-    val isLoading: Boolean,
-    val products: List<ProductPreview>,
-    val eventProducts: List<ProductPreview>
-)
