@@ -8,7 +8,7 @@ data class ProductDto(
     val basePrice: Int? = 0,
     val discountedPrice: Int? = 0,
     val discountRate: Double? = 0.0,
-    val expirationDate: String?,
+    val expirationDate: String? = "",
     val isSoldOut: Boolean? = false,
     val mainImageUrl: String? = "",
     val name: String? = "",
@@ -22,25 +22,4 @@ data class ProductDto(
     val masterProductCode: String? = "",
     val masterProductName: String? = "",
     val dealProducts: List<Long>? = emptyList()
-) {
-    constructor() : this(
-        0,
-        0,
-        0,
-        0.0,
-        "",
-        false,
-        "",
-        "",
-        0,
-        0,
-        "",
-        "",
-        false,
-        false,
-        "",
-        "",
-        "",
-        emptyList()
-    )
-}
+)

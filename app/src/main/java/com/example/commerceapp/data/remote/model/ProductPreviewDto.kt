@@ -11,12 +11,10 @@ data class ProductPreviewDto(
     val expirationDate: String? = "",
     val isSoldOut: Boolean? = false,
     val mainImageUrl: String? = "",
-    val name: String?,
-    val no: Long?,
+    val name: String? = "",
+    val no: Long? = 0L,
     val reviewCount: Int? = 0,
     val adultVerificationFailed: Boolean? = false,
     val isThirdPart: Boolean? = false,
     val productVerticalSmallUrl: String? = ""
-) {
-    constructor() : this(no = 0, name = "") // Empty constructor
-}
+)
