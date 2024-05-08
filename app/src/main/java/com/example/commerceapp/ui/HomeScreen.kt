@@ -2,7 +2,6 @@ package com.example.commerceapp.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,10 +34,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.commerceapp.R
@@ -48,28 +48,30 @@ import com.example.commerceapp.domain.model.product.ProductPreview
 @Composable
 fun HomeScreen() {
     val viewModel: HomeViewModel = hiltViewModel()
-    val uiState = viewModel.uiState.collectAsState()
-    LazyColumn(Modifier.background(Color.White)) {
+    val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
+
+    LazyColumn(modifier = Modifier.background(Color.White)) {
         item {
             HomeAppbar()
-            Divider(height = 8.dp)
+            VerticalDivider(height = 8.dp)
             HeaderSection()
         }
         if (uiState.value.isLoading) {
             item { ProgressIndicator() }
-        } else if (uiState.value.eventProducts.isNotEmpty()) {
-            item { EventProductList(products = uiState.value.eventProducts) }
-        } else {
-            item { EmptyProductList() }
         }
+
+        item(uiState.value.eventProducts) {
+            if (uiState.value.eventProducts.isNotEmpty()) EventProductList(products = uiState.value.eventProducts)
+            else EmptyProductList()
+        }
+
         item {
-            Divider(height = 16.dp)
+            VerticalDivider(height = 16.dp)
         }
-        if (uiState.value.isLoading) {
-            item { ProgressIndicator() }
-        } else if (uiState.value.products.isNotEmpty()) {
+
+        if (uiState.value.products.isNotEmpty()) {
             itemsIndexed(uiState.value.products.chunked(2)) { _, rowProducts ->
-                BoxWithConstraints() {
+                BoxWithConstraints {
                     val half = this.maxWidth / 2
                     Row(
                         modifier = Modifier
@@ -114,9 +116,9 @@ private fun HomeAppbar() {
 
 @Composable
 fun HeaderSection() {
-    Column(Modifier.padding(8.dp)) {
+    Column(modifier = Modifier.padding(8.dp)) {
         Row(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -150,19 +152,8 @@ fun ProgressIndicator() {
 }
 
 @Composable
-fun Divider(height: Dp) {
-    Box(
-        Modifier
-            .background(colorResource(id = R.color.gray_01))
-            .fillMaxWidth()
-            .height(height)
-            .padding(top = 8.dp, bottom = 8.dp)
-    )
-}
-
-@Composable
 fun EventProductList(products: List<ProductPreview>) {
-    LazyRow(Modifier.padding(start = 8.dp)) {
+    LazyRow(modifier = Modifier.padding(start = 8.dp)) {
         items(products) { product ->
             EventItemCard(productPreview = product)
         }
@@ -178,7 +169,7 @@ fun EmptyProductList() {
 @Composable
 fun EventItemCard(productPreview: ProductPreview) {
     Column(
-        Modifier
+        modifier = Modifier
             .width(180.dp)
     ) {
         GlideImage(
@@ -197,7 +188,7 @@ fun EventItemCard(productPreview: ProductPreview) {
             overflow = TextOverflow.Ellipsis
         )
         Row(
-            Modifier.padding(top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
         ) {
             Text(
                 text = "${productPreview.discountRate}% ",
@@ -223,7 +214,7 @@ fun EventItemCard(productPreview: ProductPreview) {
 @Composable
 fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
     Column(
-        Modifier
+        modifier = Modifier
             .width(size)
     ) {
         GlideImage(
@@ -247,7 +238,7 @@ fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
             modifier = Modifier.padding(top = 8.dp)
         )
         Row(
-            Modifier.padding(top = 8.dp, bottom = 8.dp)
+            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
         ) {
             if (productPreview.discountRate.toInt() > 0) {
                 Text(
@@ -259,6 +250,93 @@ fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
                     color = colorResource(id = R.color.blue_01),
                 )
             }
+            Text(
+                text = insertComma(productPreview.retailPrice),
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = Color.DarkGray,
+                    fontWeight = FontWeight(1000)
+                )
+            )
+        }
+        Row(
+            modifier = Modifier.padding(bottom = 8.dp)
+        ) {
+            Button(
+                onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
+                    colorResource(id = R.color.pink_01),
+                    colorResource(id = R.color.pink_01),
+                    colorResource(id = R.color.pink_01),
+                    colorResource(id = R.color.pink_01)
+                ),
+                modifier = Modifier
+                    .padding(0.dp)
+                    .height(25.dp)
+                    .width(35.dp),
+                contentPadding = PaddingValues(0.dp)
+            ) {
+                Text(
+                    text = "특가",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(0.dp),
+                    style = TextStyle(lineHeight = 16.sp)
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF0F0F0)
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun PreviewItemCard() {
+    val productPreview = ProductPreview(
+        retailPrice = 61000,
+        basePrice = 41900,
+        discountedPrice = 0,
+        discountRate = 31.0,
+        expirationDate = "",
+        isSoldOut = false,
+        mainImageUrl = "https://3p-image.kurly.com/files/20231124/ec626c15-ccc1-41d9-9230-39da535ce6ba.jpg",
+        name = "[샤이닝홈] 그루인 애쉬드 원형 원목 스툴 320x320 내추럴",
+        no = "1000336967",
+        reviewCount = 0,
+        adultVerificationFailed = false
+    )
+
+    Column {
+        GlideImage(
+            modifier = Modifier
+                .size(180.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            model = productPreview.mainImageUrl,
+            contentDescription = "상품사진",
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = productPreview.name.split(" ")[0],
+            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
+            modifier = Modifier.padding(top = 8.dp),
+            color = colorResource(id = R.color.text_light_gray)
+        )
+        Text(
+            text = productPreview.name,
+            style = TextStyle(fontSize = 16.sp, color = Color.Black),
+            maxLines = 1,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+        Row(
+            Modifier.padding(top = 8.dp, bottom = 8.dp)
+        ) {
+            Text(
+                text = "${productPreview.discountRate}%  ",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight(1000)
+                ),
+                color = colorResource(id = R.color.blue_01),
+            )
             Text(
                 text = insertComma(productPreview.retailPrice),
                 style = TextStyle(
@@ -295,4 +373,3 @@ fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
         }
     }
 }
-
