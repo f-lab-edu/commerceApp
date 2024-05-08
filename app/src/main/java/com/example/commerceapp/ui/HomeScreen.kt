@@ -1,6 +1,7 @@
 package com.example.commerceapp.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,16 +40,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.ProductPreview
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
 
+    val onItemClick = { path: String -> navController.navigate("product/${path}") }
     LazyColumn(
         modifier = Modifier
             .background(Color.White)
@@ -64,7 +67,9 @@ fun HomeScreen() {
         }
 
         item(uiState.value.eventProducts) {
-            if (uiState.value.eventProducts.isNotEmpty()) EventProductList(products = uiState.value.eventProducts)
+            if (uiState.value.eventProducts.isNotEmpty()) EventProductList(
+                products = uiState.value.eventProducts, onItemClick = onItemClick
+            )
             else EmptyProductList()
         }
 
@@ -75,7 +80,7 @@ fun HomeScreen() {
         if (uiState.value.products.isNotEmpty()) {
             uiState.value.products.forEach { rowProducts ->
                 item(rowProducts) {
-                    HomeItemRow(rowProducts)
+                    HomeItemRow(row = rowProducts, onItemClick = onItemClick)
                 }
             }
         } else {
@@ -145,13 +150,13 @@ fun ProgressIndicator() {
 }
 
 @Composable
-fun EventProductList(products: List<ProductPreview>) {
+fun EventProductList(products: List<ProductPreview>, onItemClick: (String) -> Unit) {
     LazyRow(
         modifier = Modifier.padding(start = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(products) { product ->
-            EventItemCard(productPreview = product)
+            EventItemCard(productPreview = product, onItemClick)
         }
     }
 }
@@ -163,11 +168,12 @@ fun EmptyProductList() {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun EventItemCard(productPreview: ProductPreview) {
+fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .width(180.dp)
             .padding(end = 4.dp)
+            .clickable { onClick(productPreview.no) }
     ) {
         GlideImage(
             modifier = Modifier
@@ -208,7 +214,7 @@ fun EventItemCard(productPreview: ProductPreview) {
 }
 
 @Composable
-fun HomeItemRow(row: List<ProductPreview>) {
+fun HomeItemRow(row: List<ProductPreview>, onItemClick: (String) -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -220,7 +226,7 @@ fun HomeItemRow(row: List<ProductPreview>) {
                     .weight(1f)
                     .fillMaxWidth(),
             ) {
-                HomeItemCard(it)
+                HomeItemCard(it, onItemClick)
             }
         }
     }
@@ -228,10 +234,12 @@ fun HomeItemRow(row: List<ProductPreview>) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HomeItemCard(productPreview: ProductPreview) {
+fun HomeItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .padding(4.dp)) {
+        .padding(4.dp)
+        .clickable { onClick(productPreview.no) }
+    ) {
         GlideImage(
             modifier = Modifier
                 .fillMaxWidth()
