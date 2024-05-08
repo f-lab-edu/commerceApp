@@ -1,11 +1,15 @@
 package com.example.commerceapp.data.remote
 
+import com.example.commerceapp.data.BRAND_COLLECTION_PATH
+import com.example.commerceapp.data.CATEGORY_COLLECTION_PATH
+import com.example.commerceapp.data.PRODUCT_COLLECTION_PATH
 import com.example.commerceapp.data.remote.model.ProductDto
 import com.example.commerceapp.data.remote.model.ProductPreviewDto
 import com.example.commerceapp.data.remote.model.mapper.ProductMapper
 import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.domain.model.Brand
 import com.example.commerceapp.domain.model.Category
+import com.example.commerceapp.domain.model.common.FireStoreNoDataException
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.Product
 import com.example.commerceapp.domain.model.product.ProductPreview
@@ -24,59 +28,59 @@ class ProductRepositoryImpl @Inject constructor(
 ) : ProductRepository {
 
     override suspend fun productSearchByBrand(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("product")
+        return firestore.collection(PRODUCT_COLLECTION_PATH)
             .whereEqualTo("brand", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
     override suspend fun productSearchByCategory(keyword: String): Flow<List<ProductPreview>> {
-        return firestore.collection("product")
+        return firestore.collection(PRODUCT_COLLECTION_PATH)
             .whereEqualTo("category", keyword).snapshots()
             .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
-    override suspend fun searchProduct(searchParam: ProductSearchParam): Flow<List<ProductPreview>> {
-        return if (searchParam.keyword.isNotBlank()) {
-            firestore.collection("product").snapshots()
-                .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
-                .map {
-                    it.filter { it.name.contains(searchParam.keyword) }
+    override suspend fun searchProduct(param: ProductSearchParam): Flow<List<ProductPreview>> {
+        return if (param.keyword.isNotBlank()) {
+            firestore.collection(PRODUCT_COLLECTION_PATH).snapshots()
+                .map { querySnapshot ->
+                    convertToProductList(querySnapshot.toObjects(ProductPreviewDto::class.java))
+                        .filter { product -> product.name.contains(param.keyword) }
                 }
         } else {
-            firestore.collection("product").limit(20).snapshots()
+            firestore.collection(PRODUCT_COLLECTION_PATH).limit(20).snapshots()
                 .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
         }
     }
 
     override suspend fun getProduct(id: String): Flow<Product> {
         val db = FirebaseFirestore.getInstance()
-        val collectionRef = db.collection("product")
+        val collectionRef = db.collection(PRODUCT_COLLECTION_PATH)
         return collectionRef.whereEqualTo("no", id.toLong()).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
                 snapshot.firstOrNull()?.toObject(ProductDto::class.java)
-                    ?.let { productMapper.mapToProduct(it) }?: throw Exception("데이터가 없습니다.")
+                    ?.let { productMapper.mapToProduct(it) } ?: throw FireStoreNoDataException("데이터가 없습니다.")
             }
     }
 
     override suspend fun searchCategories(keyword: String): Flow<List<Category>> {
-        return firestore.collection("category")
+        return firestore.collection(CATEGORY_COLLECTION_PATH)
             .whereArrayContainsAny("name", listOf("*${keyword}*")).snapshots()
             .mapNotNull { it.toObjects(Category::class.java) }
     }
 
     override suspend fun searchBrands(keyword: String): Flow<List<Brand>> {
-        return firestore.collection("brand")
+        return firestore.collection(BRAND_COLLECTION_PATH)
             .whereArrayContainsAny("name", listOf("*${keyword}*")).snapshots()
             .mapNotNull { it.toObjects(Brand::class.java) }
     }
 
     override suspend fun getAllCategory(): Flow<List<Category>> {
-        return firestore.collection("category").snapshots()
+        return firestore.collection(CATEGORY_COLLECTION_PATH).snapshots()
             .mapNotNull { it.toObjects(Category::class.java) }
     }
 
     override suspend fun getAllBrand(): Flow<List<Brand>> {
-        return firestore.collection("brand").snapshots()
+        return firestore.collection(BRAND_COLLECTION_PATH).snapshots()
             .mapNotNull { it.toObjects(Brand::class.java) }
     }
 
