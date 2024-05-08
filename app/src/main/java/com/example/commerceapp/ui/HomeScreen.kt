@@ -2,10 +2,11 @@ package com.example.commerceapp.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
@@ -35,7 +35,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,7 +49,11 @@ fun HomeScreen() {
     val viewModel: HomeViewModel = hiltViewModel()
     val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
 
-    LazyColumn(modifier = Modifier.background(Color.White)) {
+    LazyColumn(
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxWidth()
+    ) {
         item {
             HomeAppbar()
             VerticalDivider(height = 8.dp)
@@ -70,19 +73,9 @@ fun HomeScreen() {
         }
 
         if (uiState.value.products.isNotEmpty()) {
-            itemsIndexed(uiState.value.products.chunked(2)) { _, rowProducts ->
-                BoxWithConstraints {
-                    val half = this.maxWidth / 2
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        for (product in rowProducts) {
-                            HomeItemCard(productPreview = product, half)
-                        }
-                    }
+            uiState.value.products.forEach { rowProducts ->
+                item(rowProducts) {
+                    HomeItemRow(rowProducts)
                 }
             }
         } else {
@@ -153,7 +146,10 @@ fun ProgressIndicator() {
 
 @Composable
 fun EventProductList(products: List<ProductPreview>) {
-    LazyRow(modifier = Modifier.padding(start = 8.dp)) {
+    LazyRow(
+        modifier = Modifier.padding(start = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(products) { product ->
             EventItemCard(productPreview = product)
         }
@@ -171,11 +167,13 @@ fun EventItemCard(productPreview: ProductPreview) {
     Column(
         modifier = Modifier
             .width(180.dp)
+            .padding(end = 4.dp)
     ) {
         GlideImage(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .size(160.dp),
+                .fillMaxWidth()
+                .aspectRatio(1f),
             model = productPreview.mainImageUrl,
             contentDescription = "상품사진",
             contentScale = ContentScale.Crop
@@ -183,7 +181,6 @@ fun EventItemCard(productPreview: ProductPreview) {
         Text(
             text = productPreview.name,
             style = TextStyle(fontSize = 16.sp, color = Color.Black),
-            modifier = Modifier.fillMaxWidth(),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -210,16 +207,35 @@ fun EventItemCard(productPreview: ProductPreview) {
     }
 }
 
+@Composable
+fun HomeItemRow(row: List<ProductPreview>) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        row.forEach {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+            ) {
+                HomeItemCard(it)
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HomeItemCard(productPreview: ProductPreview, size: Dp) {
-    Column(
-        modifier = Modifier
-            .width(size)
-    ) {
+fun HomeItemCard(productPreview: ProductPreview) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(4.dp)) {
         GlideImage(
             modifier = Modifier
-                .size(180.dp)
+                .fillMaxWidth()
+                .aspectRatio(1f)
                 .clip(RoundedCornerShape(8.dp)),
             model = productPreview.mainImageUrl,
             contentDescription = "상품사진",

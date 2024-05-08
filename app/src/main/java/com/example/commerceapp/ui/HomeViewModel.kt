@@ -27,7 +27,11 @@ class HomeViewModel @Inject constructor(
 
     val homeUiState: StateFlow<HomeUiState> =
         combine(_eventProducts, _products) { events, products ->
-            HomeUiState(isLoading = false, products = products, eventProducts = events)
+            HomeUiState(
+                isLoading = false,
+                products = getProductAsTowDimList(products, 2),
+                eventProducts = events
+            )
         }.stateIn(
             scope = viewModelScope,
             initialValue = HomeUiState(
@@ -96,9 +100,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getProductAsTowDimList(
+        list: List<ProductPreview>,
+        itemsPerLine: Int
+    ): List<List<ProductPreview>> {
+        return list.chunked(itemsPerLine)
+    }
+
     data class HomeUiState(
         val isLoading: Boolean,
-        val products: List<ProductPreview>,
+        val products: List<List<ProductPreview>>,
         val eventProducts: List<ProductPreview>
     )
 }
