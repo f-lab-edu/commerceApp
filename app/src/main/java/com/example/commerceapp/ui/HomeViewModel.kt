@@ -54,7 +54,6 @@ class HomeViewModel @Inject constructor(
             pagePerSize = 20
         )
         handleFlowResponse(
-            searchProduct,
             param,
             { _products.value = it },
             { /* 에러 처리*/ },
@@ -70,7 +69,6 @@ class HomeViewModel @Inject constructor(
         )
 
         handleFlowResponse(
-            searchProduct,
             param,
             { _eventProducts.value = it },
             { /* 에러 처리*/ },
@@ -79,14 +77,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun handleFlowResponse(
-        useCase: SearchProductsUseCase,
         parameter: ProductSearchParam,
         onSuccess: (List<ProductPreview>) -> Unit,
         onError: (String) -> Unit,
         scope: CoroutineScope
     ) {
         scope.launch {
-            useCase.invoke(parameter).collectLatest {
+            searchProduct.invoke(parameter).collectLatest {
                 when (it) {
                     is ResultEntity.Success -> {
                         onSuccess(it.data)
@@ -100,7 +97,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getProductAsTowDimList(
+    private fun getProductAsTowDimList(
         list: List<ProductPreview>,
         itemsPerLine: Int
     ): List<List<ProductPreview>> {
