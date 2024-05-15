@@ -57,13 +57,21 @@ fun BottomNavigation() {
             startDestination = BottomNavigationScreen.Home.route
         ) {
             composable(BottomNavigationScreen.Home.route) { HomeScreen(navController) }
-            composable(BottomNavigationScreen.Search.route) { SearchScreen() }
+            composable(BottomNavigationScreen.Search.route) { SearchScreen(navController) }
             composable(BottomNavigationScreen.Profile.route) { ProfileScreen() }
             composable("product/{productNo}") { navBackStackEntry ->
                 navBackStackEntry.arguments?.getString("productNo")?.let {
                     ProductScreen(
                         navController = navController,
                         productNo = it
+                    )
+                } ?: ErrorScreen()
+            }
+            composable("search/{keyword}") { navBackStackEntry ->
+                navBackStackEntry.arguments?.getString("keyword")?.let {
+                    SearchResultScreen(
+                        navController = navController,
+                        keyword = it
                     )
                 } ?: ErrorScreen()
             }
