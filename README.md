@@ -11,16 +11,17 @@
      - 테스트 코드를 작성해보고 테스트하기 좋은 코드에 대해 생각해보기
 
 ## Screenshots
-
-![appui](https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/d8922268-bf42-43d1-b8c2-e5ff127e2727)
-
-
-# Architecture
-- 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 좋음.
-### UI layer
 <img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/b2f58b23-0953-4ab0-a88f-7c6be1d852aa" width="180"/>
 <img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/82d3ceff-09a7-45e2-b750-890ccd244f85" width="180"/>
 <img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/0b34efdc-b2e9-4f60-8d40-29a3d2c9250e" width="180"/>
+
+# Architecture
+- 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 좋음.
+
+### UI layer
+![Application data flows from the data layer to the ViewModel. UI state
+flows from the ViewModel to the UI elements, and events flow from the UI
+elements back to the ViewModel.](https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-ui-udf.png)
 ### Domain layer
 
 ### Data layer architecture
