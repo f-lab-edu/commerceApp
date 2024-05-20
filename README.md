@@ -8,6 +8,7 @@
 - 목적 :
      - 확장성을 고려한 설계와 좋은 코드 작성 방법을 익히는 것을 목표로 개발
      - jetpack compose + coroutine + flow 를 이용한 상태관리
+     - 테스트 코드를 작성해보고 테스트하기 좋은 코드에 대해 생각해보기
 
 ## Screenshots
 
@@ -17,10 +18,9 @@
 # Architecture
 - 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 좋음.
 ### UI layer
-![Application data flows from the data layer to the ViewModel. UI state
-flows from the ViewModel to the UI elements, and events flow from the UI
-elements back to the ViewModel.](https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-ui-udf.png)
-
+<img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/b2f58b23-0953-4ab0-a88f-7c6be1d852aa" width="180"/>
+<img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/82d3ceff-09a7-45e2-b750-890ccd244f85" width="180"/>
+<img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/0b34efdc-b2e9-4f60-8d40-29a3d2c9250e" width="180"/>
 ### Domain layer
 
 ### Data layer architecture
@@ -47,7 +47,7 @@ to the rest of the app and depend on the data sources.](https://developer.androi
 
 ## 브랜치 전략
 가장 대표적인 브랜치 전략인 git flow를 사용해보면서 프로덕션 레벨의 이력관리를 경험해보기 위함.
-### Git Flow (option 1)
+### Git Flow
 -   master
     -   제품으로 출시될 수 있는 브랜치
 -   develop
@@ -69,13 +69,6 @@ branch를 merge 할 때는 항상 —no-ff 옵션을 붙여서 branch에 대한 
 -   테스트가 완료되면 release 브랜치를 master와 develop에 merge
 
 ## 주요 기능
-- 회원
-    - 회원가입
-    - 정보수정
-    - 장바구니
 - 상품
     - 상품조회
     - 검색
-- 결제
-    - 주문/결제
-- 리뷰
