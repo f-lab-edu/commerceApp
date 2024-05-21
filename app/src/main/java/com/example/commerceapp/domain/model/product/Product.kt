@@ -5,7 +5,7 @@ data class Product(
     val basePrice: Int,
     val discountedPrice: Int,
     val discountRate: Double,
-    val expirationDate: String?,
+    val expirationDate: String,
     val isSoldOut: Boolean,
     val mainImageUrl: String,
     val name: String,
