@@ -9,6 +9,7 @@
      - 확장성을 고려한 설계와 좋은 코드 작성 방법을 익히는 것을 목표로 개발
      - jetpack compose + coroutine + flow 를 이용한 상태관리
      - 테스트 코드를 작성해보고 테스트하기 좋은 코드에 대해 생각해보기
+     - CI/CD 환경 구축해보기
 
 ## Screenshots
 <img src="https://github.com/hyun132/Algorithm-With-Kotlin/assets/46836642/b2f58b23-0953-4ab0-a88f-7c6be1d852aa" width="180"/>
@@ -19,14 +20,12 @@
 - 안드로이드에서 권장하는 [아키텍처](https://developer.android.com/topic/architecture/intro?_gl=1*hmaj30*_up*MQ..*_ga*MTY2OTE5MDI1Ny4xNzA4MjgzNDEy*_ga_6HH9YJMN9M*MTcwODI4MzQxMi4xLjAuMTcwODI4NDgzMy4wLjAuMA..) :  앱의 확장에 용이하고, 데이터 흐름을 단방향으로 관리하여 변경을 추적하기 좋음.
 
 ### UI layer
-![Application data flows from the data layer to the ViewModel. UI state
-flows from the ViewModel to the UI elements, and events flow from the UI
-elements back to the ViewModel.](https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-ui-udf.png)
+<img src="https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-ui-udf.png" width="250"/>
+
 ### Domain layer
 
 ### Data layer architecture
-![In a typical architecture, the data layer's repositories provide data
-to the rest of the app and depend on the data sources.](https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-data-overview.png)
+<img src="https://developer.android.com/static/topic/libraries/architecture/images/mad-arch-data-overview.png" width="250"/>
 
 참조 : [Recommendations for Android architecture](https://developer.android.com/topic/architecture/recommendations?_gl=1*gej0qv*_up*MQ..*_ga*MTQzMzQ2OTY5Ni4xNzA4Mjc5NjU4*_ga_6HH9YJMN9M*MTcwODI3OTY1OC4xLjAuMTcwODI3OTY1OC4wLjAuMA..)
 
@@ -34,17 +33,17 @@ to the rest of the app and depend on the data sources.](https://developer.androi
 
 -   [Kotlin](https://kotlinlang.org/)  based,  [Coroutines](https://github.com/Kotlin/kotlinx.coroutines)  +  [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/)  for asynchronous.
 - Jetpack
-    - [Lifecycle](https://developer.android.com/jetpack/compose/lifecycle?_gl=1*8r5y71*_up*MQ..*_ga*MTIzODQ0Mzc1NC4xNzA4MjgzMjUw*_ga_6HH9YJMN9M*MTcwODI4MzI0OS4xLjAuMTcwODI4MzI0OS4wLjAuMA..): Observe Android lifecycles and handle UI states upon the lifecycle changes.
-    -   ViewModel: Manages UI-related data holder and lifecycle aware. Allows data to survive configuration changes such as screen rotations.
-    -   [Hilt](https://dagger.dev/hilt/): for dependency injection.
-        There are two types of synchronization and they can complement each other:
-    - [navigation](https://developer.android.com/jetpack/compose/navigation) : navigate between composables while taking advantage of the Navigation component's infrastructure and features.
-
-- [Firestore database](https://firebase.google.com/docs/firestore?hl=ko) : Cloud Firestore is a cloud-hosted, NoSQL database that your Apple, Android, and web apps can access directly via native SDKs
-- [Retrofit](https://square.github.io/retrofit/ ) :  A type-safe  **HTTP client**  for Android and Java
-- [moshi](https://github.com/square/moshi) : Moshi is a modern JSON library for Android, Java and Kotlin. It makes it easy to parse JSON into Java and Kotlin classes
-- [Glide](https://github.com/bumptech/glide) : Glide supports fetching, decoding, and displaying video stills, images, and animated GIFs
-- [Timber](https://github.com/JakeWharton/timber) : This is a logger with a small, extensible API which provides utility on top of Android's normal `Log` class.
+    - [Lifecycle](https://developer.android.com/jetpack/compose/lifecycle?_gl=1*8r5y71*_up*MQ..*_ga*MTIzODQ0Mzc1NC4xNzA4MjgzMjUw*_ga_6HH9YJMN9M*MTcwODI4MzI0OS4xLjAuMTcwODI4MzI0OS4wLjAuMA..): 액티비티 및 프래그먼트의 라이프사이클을 관찰하고 라이프사이클 변경에 따라 UI 상태를 관리합니다.
+    -   [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel): UI 관련 데이터를 보관하는 뷰모델은 라이프사이클을 인지하며, 화면 회전과 같은 구성 변경 시에도 데이터를 유지 관리합니다.
+    -   [Hilt](https://dagger.dev/hilt/): 의존성 주입 (Dependency Injection)을 위한 라이브러리입니다.
+    - [navigation](https://developer.android.com/jetpack/compose/navigation) : 컴포저블 간의 이동을 탐색 구성 요소의 인프라 및 기능을 활용하여 쉽게 구현합니다.
+- [Firestore database](https://firebase.google.com/docs/firestore?hl=ko) : 클라우드 파이어스토어는 Apple, Android, 웹 앱에서 기본 SDK를 통해 직접 액세스할 수 있는 클라우드 기반 NoSQL 데이터베이스입니다.
+- [Retrofit](https://square.github.io/retrofit/ ) :  안드로이드와 자바를 위한 타입 안전 HTTP 클라이언트입니다.
+- [moshi](https://github.com/square/moshi) : 안드로이드, 자바, 코틀린을 위한 최신 JSON 라이브러리입니다. JSON을 자바 및 코틀린 클래스로 쉽게 파싱하도록 지원합니다.
+- [Glide](https://github.com/bumptech/glide) : 글라이드는 비디오 정지 이미지, 이미지, 애니메이션 GIF 로딩, 디코딩, 표시를 지원합니다.
+- [Timber](https://github.com/JakeWharton/timber) : 팀버는 안드로이드의 기본 Log 클래스 위에 유용한 기능을 제공하는 작고 확장 가능한 API를 가진 로거입니다.
+- [Espresso](https://developer.android.com/training/testing/espresso?hl=ko) : 안드로이드 UI 테스트를 위한 프레임워크입니다.
+- [MockK](https://mockk.io/) : 테스트 코드를 작성하기 위한 코틀린 Mock 라이브러리이다.
 
 ## 브랜치 전략
 가장 대표적인 브랜치 전략인 git flow를 사용해보면서 프로덕션 레벨의 이력관리를 경험해보기 위함.
@@ -73,3 +72,4 @@ branch를 merge 할 때는 항상 —no-ff 옵션을 붙여서 branch에 대한 
 - 상품
     - 상품조회
     - 검색
+    - 장바구니
