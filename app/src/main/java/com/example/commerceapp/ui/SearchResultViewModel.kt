@@ -25,7 +25,10 @@ class SearchResultViewModel @Inject constructor(
         _uiState.value = uiState.value.copy(query = input)
     }
 
-    fun fetchProducts(keyword: String = "", page: Int = 1) {
+    fun fetchProducts(
+        keyword: String = "",
+        page: Int = 1
+    ) {
         if (keyword.isNullOrBlank()) return
         viewModelScope.launch {
             _uiState.value = uiState.value.copy(isLoading = true)

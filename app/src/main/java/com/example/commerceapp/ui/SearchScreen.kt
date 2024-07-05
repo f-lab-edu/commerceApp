@@ -22,8 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -45,30 +45,31 @@ fun SearchScreen(navController: NavController) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("search/${path}") }
     Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
+        verticalArrangement = Arrangement.Top,
     ) {
 
         Box(
             modifier = Modifier
-                .height(dimensionResource(id = androidx.appcompat.R.dimen.abc_action_bar_default_height_material))
+                .height(56.dp)
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            searchBar(onItemClick)
+            SearchBar(onItemClick)
         }
         Column(Modifier.padding(8.dp)) {
 
-            clips(title = "최근 검색어", list = uiState.value.recent, onClick = onItemClick)
+            Clips(title = "최근 검색어", list = uiState.value.recent, onClick = onItemClick)
 
-            clips(title = "추천 검색어", list = uiState.value.recommends, onClick = onItemClick)
+            Clips(title = "추천 검색어", list = uiState.value.recommends, onClick = onItemClick)
         }
     }
-
 }
 
 @Composable
-fun searchBar(onItemClick: (String) -> Unit) {
+fun SearchBar(onItemClick: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -105,7 +106,11 @@ fun searchBar(onItemClick: (String) -> Unit) {
 }
 
 @Composable
-fun clips(title: String, list: List<String>, onClick: (String) -> Unit) {
+fun Clips(
+    title: String,
+    list: List<String>,
+    onClick: (String) -> Unit
+) {
     Column {
         Text(
             text = title,

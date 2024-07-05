@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.commerceapp.domain.model.common.ResultEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -40,7 +39,6 @@ class SearchViewModel @Inject constructor() : ViewModel() {
             started = SharingStarted.WhileSubscribed()
         )
 
-
     private val flowRecommends = flow<ResultEntity<List<String>>> {
         delay(Duration.ofSeconds(1))
         emit(ResultEntity.Success(listOf("암막커튼", "마켓비", "모니터받침대", "책상", "장스탠드")))
@@ -49,7 +47,6 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         delay(Duration.ofSeconds(1))
         emit(ResultEntity.Success(listOf("팜레스트", "러그", "쓰레기통", "블라인드")))
     }
-
 
     init {
         fetchRecent()
@@ -60,8 +57,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         handleFlowResponse(
             flowRecommends,
             { _recommends.value = it },
-            { /* 에러 처리*/ },
-            viewModelScope
+            { /* 에러 처리*/ }
         )
     }
 
@@ -69,18 +65,16 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         handleFlowResponse(
             flowRecent,
             { _recent.value = it },
-            { /* 에러 처리*/ },
-            viewModelScope
+            { /* 에러 처리*/ }
         )
     }
 
     private fun handleFlowResponse(
         flow: Flow<ResultEntity<List<String>>>,
         onSuccess: (List<String>) -> Unit,
-        onError: (String) -> Unit,
-        scope: CoroutineScope
+        onError: (String) -> Unit
     ) {
-        scope.launch {
+        viewModelScope.launch {
             flow.collectLatest {
                 when (it) {
                     is ResultEntity.Success -> {

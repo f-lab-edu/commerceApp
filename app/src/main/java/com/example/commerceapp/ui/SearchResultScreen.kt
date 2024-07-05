@@ -1,8 +1,9 @@
 package com.example.commerceapp.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,9 +32,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.commerceapp.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchResultScreen(navController: NavController, keyword: String) {
+fun SearchResultScreen(
+    navController: NavController,
+    keyword: String
+) {
     val viewModel: SearchResultViewModel = hiltViewModel()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
@@ -43,70 +46,51 @@ fun SearchResultScreen(navController: NavController, keyword: String) {
             focusRequester.requestFocus()
         } else {
             viewModel.updateKeyword(keyword)
+            viewModel.fetchProducts(keyword = keyword)
         }
-        viewModel.fetchProducts(keyword = keyword)
     }
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .height(dimensionResource(id = androidx.appcompat.R.dimen.abc_action_bar_default_height_material)),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = { navController.navigateUp() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic__left_arrow),
-                        contentDescription = "뒤로가기"
-                    )
+    Column {
+        SearchAppbar(
+            query = uiState.value.query,
+            onChange = { text -> viewModel.updateKeyword(text) },
+            onLeftIconClick = { navController.navigateUp() },
+            submit = { text -> viewModel.fetchProducts(text) },
+            focusRequester = focusRequester
+        )
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.White),
+            verticalArrangement = Arrangement.Top,
+        ) {
+            if (uiState.value.products.isNotEmpty()) {
+                uiState.value.products.forEach { rowProducts ->
+                    item(rowProducts) {
+                        HomeItemRow(row = rowProducts, onItemClick = onItemClick)
+                    }
                 }
-
-                TextField(
-                    value = uiState.value.query,
-                    onValueChange = { text ->
-                        viewModel.updateKeyword(text)
-                    },
-                    textStyle = TextStyle(
-                        textDecoration = TextDecoration.None
-                    ),
-                    colors = TextFieldDefaults.textFieldColors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier.focusRequester(focusRequester)
-                )
-
-                IconButton(onClick = { viewModel.fetchProducts(uiState.value.query) }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic__search),
-                        contentDescription = "검색"
-                    )
-                }
+            } else {
+                item(uiState.value.products) { EmptyProductList() }
             }
-        }
-
-        if (uiState.value.products.isNotEmpty()) {
-            uiState.value.products.forEach { rowProducts ->
-                item(rowProducts) {
-                    HomeItemRow(row = rowProducts, onItemClick = onItemClick)
-                }
-            }
-        } else {
-            item(uiState.value.products) { EmptyProductList() }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 @Preview(showBackground = true)
-fun prevSearchResult() {
+fun PrevSearchResult() {
+    SearchAppbar(focusRequester = FocusRequester())
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchAppbar(
+    query: String = "",
+    onChange: (String) -> Unit = {},
+    onLeftIconClick: () -> Unit = {},
+    submit: (String) -> Unit = {},
+    focusRequester: FocusRequester
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,18 +99,17 @@ fun prevSearchResult() {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = { }) {
+        IconButton(onClick = { onLeftIconClick() }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic__left_arrow),
                 contentDescription = "뒤로가기"
             )
         }
 
-        // Page title
         TextField(
-            value = "텍스트",
-            onValueChange = { text ->
-
+            value = query,
+            onValueChange = { text: String ->
+                onChange(text)
             },
             textStyle = TextStyle(
                 textDecoration = TextDecoration.None
@@ -135,9 +118,11 @@ fun prevSearchResult() {
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),
+            singleLine = true,
+            modifier = Modifier.focusRequester(focusRequester)
         )
 
-        IconButton(onClick = { }) {
+        IconButton(onClick = { submit(query) }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic__search),
                 contentDescription = "검색"
