@@ -45,16 +45,15 @@ fun SearchResultScreen(
         if (keyword.isNullOrBlank()) {
             focusRequester.requestFocus()
         } else {
-            viewModel.updateKeyword(keyword)
-            viewModel.fetchProducts(keyword = keyword)
+            viewModel.searchByKeyword(keyword)
         }
     }
     Column {
         SearchAppbar(
             query = uiState.value.query,
-            onChange = { text -> viewModel.updateKeyword(text) },
+            onChange = { text -> viewModel.searchByKeyword(text) },
             onLeftIconClick = { navController.navigateUp() },
-            submit = { text -> viewModel.fetchProducts(text) },
+            submit = { text -> viewModel.searchByKeyword(text) },
             focusRequester = focusRequester
         )
         LazyColumn(

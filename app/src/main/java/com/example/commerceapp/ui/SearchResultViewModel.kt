@@ -7,6 +7,7 @@ import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.ProductPreview
 import com.example.commerceapp.domain.usecases.product.SearchProductsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -21,17 +22,17 @@ class SearchResultViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SearchUiState("", false, emptyList()))
     val uiState: StateFlow<SearchUiState> = _uiState
 
-    fun updateKeyword(input: String) {
-        _uiState.value = uiState.value.copy(query = input)
-    }
+    var searchJob: Job? = null
 
-    fun fetchProducts(
+    fun searchByKeyword(
         keyword: String = "",
         page: Int = 1
     ) {
+        _uiState.value = uiState.value.copy(query = keyword)
         if (keyword.isNullOrBlank()) return
-        viewModelScope.launch {
-            _uiState.value = uiState.value.copy(isLoading = true)
+        searchJob?.cancel()
+        _uiState.value = uiState.value.copy(isLoading = true)
+        searchJob = viewModelScope.launch {
             searchProduct.invoke(
                 ProductSearchParam(
                     keyword = keyword,
