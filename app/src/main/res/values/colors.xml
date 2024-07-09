@@ -10,8 +10,10 @@
 
     <color name="text_black">#2F3437</color>
 
-    <color name="gray_01">#F8F9FB</color>
+    <color name="gray_01">#F6F8F9</color>
+    <color name="gray_02">#E9EDF0</color>
     <color name="text_light_gray">#8B8293</color>
+    <color name="text_light_gray2">#707373</color>
 
     <color name="pink_01">#FF737B</color>
     <color name="blue_01">#38C4EF</color>
