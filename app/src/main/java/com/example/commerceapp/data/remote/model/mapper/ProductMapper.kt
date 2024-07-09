@@ -23,7 +23,7 @@ class ProductMapper {
             dto.productVerticalSmallUrl ?: "",
             dto.masterProductCode ?: "",
             dto.masterProductName ?: "",
-            emptyList()
+            dto.dealProducts?:emptyList()
         )
     }
 
