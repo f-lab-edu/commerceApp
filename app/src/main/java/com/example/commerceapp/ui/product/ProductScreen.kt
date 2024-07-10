@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,7 +55,7 @@ fun ProductScreen(
 ) {
 
     val viewModel: ProductViewModel = hiltViewModel()
-    val uiState = viewModel.productUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.productUiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
 
     LaunchedEffect(Unit) {
@@ -62,7 +63,7 @@ fun ProductScreen(
     }
 
     Scaffold(
-        topBar = { TopAppbar(navController, uiState.value.product.name) },
+        topBar = { TopAppbar(navController, uiState.product.name) },
         bottomBar = {
             Row(
                 modifier = Modifier
@@ -100,11 +101,11 @@ fun ProductScreen(
                 .fillMaxSize()
                 .padding(it)
         ) {
-            item(uiState.value.isLoading) {
-                TopContents(uiState.value.product)
+            item(uiState.isLoading) {
+                TopContents(uiState.product)
             }
 
-            item(uiState.value.product.no) {
+            item(uiState.product.no) {
                 HorizontalDivider(thickness = 8.dp, color = colorResource(id = R.color.gray_01))
                 Column {
                     Text(
@@ -113,18 +114,18 @@ fun ProductScreen(
                         modifier = Modifier.padding(16.dp),
                         fontWeight = FontWeight.Bold
                     )
-                    Text(text = uiState.value.product.shortDescription)
+                    Text(text = uiState.product.shortDescription)
                     GlideImage(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        model = uiState.value.product.productVerticalSmallUrl,
+                        model = uiState.product.productVerticalSmallUrl,
                         loading = placeholder(R.drawable.iv__placeholder),
                         contentDescription = "상품사진",
                         contentScale = ContentScale.Crop
                     )
                 }
             }
-            if (uiState.value.isLoading == ProductViewModel.ProductState.SUCCESS) {
+            if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
                 item {
                     Text(
                         text = "관련상품",
@@ -136,10 +137,10 @@ fun ProductScreen(
                         modifier = Modifier.padding(start = 8.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(uiState.value.relatedProducts) { product ->
+                        items(uiState.relatedProducts) { product ->
                             EventItemCard(
                                 productPreview = product,
-                                onClick = { onItemClick(uiState.value.product.no) })
+                                onClick = { onItemClick(uiState.product.no) })
                         }
                     }
                 }
