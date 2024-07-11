@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">CommerceApp</string>
+
+    <string name="home">home</string>
+    <string name="search">search</string>
+    <string name="profile">profile</string>
+    <string name="cart">장바구니</string>
+    <string name="today_deals">오늘의 할인상품</string>
+    <string name="more">더보기</string>
+    <string name="empty_list">목록이 없습니다.</string>
+    <string name="product_image">상품사진</string>
+    <string name="promotions">특가</string>
+    <string name="likes">북마크 수</string>
+    <string name="checkout">구매하기</string>
+    <string name="reated_products">관련상품</string>
+    <string name="product_info">상품정보</string>
+    <string name="home_title">Page title</string>
 </resources>

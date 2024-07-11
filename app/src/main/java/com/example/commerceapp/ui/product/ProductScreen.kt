@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
@@ -51,10 +52,9 @@ import com.gowtham.ratingbar.RatingBar
 @Composable
 fun ProductScreen(
     navController: NavController,
-    productNo: String
+    productNo: String,
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
-
-    val viewModel: ProductViewModel = hiltViewModel()
     val uiState by viewModel.productUiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
 
@@ -73,7 +73,7 @@ fun ProductScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic__heart),
-                        contentDescription = "북마크 수"
+                        contentDescription = stringResource(R.string.likes)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(text = "12,345")
@@ -91,7 +91,7 @@ fun ProductScreen(
                         .fillMaxWidth()
                         .height(45.dp)
                 ) {
-                    Text(text = "구매하기")
+                    Text(text = stringResource(R.string.checkout))
                 }
             }
         }
@@ -109,7 +109,7 @@ fun ProductScreen(
                 HorizontalDivider(thickness = 8.dp, color = colorResource(id = R.color.gray_01))
                 Column {
                     Text(
-                        text = "상품정보",
+                        text = stringResource(R.string.product_info),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(16.dp),
                         fontWeight = FontWeight.Bold
@@ -120,7 +120,7 @@ fun ProductScreen(
                             .fillMaxWidth(),
                         model = uiState.product.productVerticalSmallUrl,
                         loading = placeholder(R.drawable.iv__placeholder),
-                        contentDescription = "상품사진",
+                        contentDescription = stringResource(R.string.checkout),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -128,7 +128,7 @@ fun ProductScreen(
             if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
                 item {
                     Text(
-                        text = "관련상품",
+                        text = stringResource(R.string.reated_products),
                         fontSize = 20.sp,
                         modifier = Modifier.padding(16.dp),
                         fontWeight = FontWeight.Bold
@@ -168,7 +168,7 @@ private fun TopAppbar(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic__left_arrow),
-                contentDescription = "장바구니"
+                contentDescription = stringResource(R.string.cart)
             )
         }
         Text(
@@ -188,7 +188,7 @@ private fun TopAppbar(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic__shopping_cart),
-                contentDescription = "장바구니"
+                contentDescription = stringResource(R.string.cart)
             )
         }
     }
@@ -202,7 +202,7 @@ fun TopContents(product: Product) {
             .fillMaxWidth()
             .height(474.dp),
         model = product.mainImageUrl,
-        contentDescription = "상품사진",
+        contentDescription = stringResource(R.string.product_image),
         contentScale = ContentScale.Crop
     )
     Column(
