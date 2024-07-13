@@ -80,7 +80,7 @@ fun ProductScreen(
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic__heart),
+                        painter = painterResource(id = R.drawable.ic_heart),
                         contentDescription = stringResource(R.string.likes)
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -172,7 +172,7 @@ private fun TopAppbar(
             modifier = Modifier.size(24.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__left_arrow),
+                painter = painterResource(id = R.drawable.ic_left_arrow),
                 contentDescription = stringResource(R.string.cart)
             )
         }
@@ -191,7 +191,7 @@ private fun TopAppbar(
             modifier = Modifier.size(24.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__shopping_cart),
+                painter = painterResource(id = R.drawable.ic_shopping_cart),
                 contentDescription = stringResource(R.string.cart)
             )
         }
