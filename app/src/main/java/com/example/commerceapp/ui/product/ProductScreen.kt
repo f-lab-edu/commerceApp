@@ -46,6 +46,14 @@ import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.Product
 import com.example.commerceapp.ui.EventItemCard
 import com.example.commerceapp.ui.insertComma
+import com.example.commerceapp.ui.theme.HeadlineSmall
+import com.example.commerceapp.ui.theme.blue1
+import com.example.commerceapp.ui.theme.gray1
+import com.example.commerceapp.ui.theme.gray2
+import com.example.commerceapp.ui.theme.gray4
+import com.example.commerceapp.ui.theme.titleLarge
+import com.example.commerceapp.ui.theme.titleMedium
+import com.example.commerceapp.ui.theme.white
 import com.gowtham.ratingbar.RatingBar
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -81,10 +89,10 @@ fun ProductScreen(
                 Spacer(modifier = Modifier.width(4.dp))
                 Button(
                     colors = ButtonColors(
-                        containerColor = colorResource(id = R.color.blue_01),
-                        contentColor = colorResource(R.color.white),
-                        disabledContentColor = colorResource(R.color.white),
-                        disabledContainerColor = colorResource(R.color.text_light_gray2)
+                        containerColor = blue1,
+                        contentColor = white,
+                        disabledContentColor = white,
+                        disabledContainerColor = gray2
                     ),
                     onClick = {},
                     modifier = Modifier
@@ -106,13 +114,12 @@ fun ProductScreen(
             }
 
             item(uiState.product.no) {
-                HorizontalDivider(thickness = 8.dp, color = colorResource(id = R.color.gray_01))
+                HorizontalDivider(thickness = 8.dp, color = gray1)
                 Column {
                     Text(
                         text = stringResource(R.string.product_info),
-                        fontSize = 20.sp,
+                        style = titleLarge,
                         modifier = Modifier.padding(16.dp),
-                        fontWeight = FontWeight.Bold
                     )
                     Text(text = uiState.product.shortDescription)
                     GlideImage(
@@ -129,9 +136,8 @@ fun ProductScreen(
                 item {
                     Text(
                         text = stringResource(R.string.reated_products),
-                        fontSize = 20.sp,
+                        style = titleLarge,
                         modifier = Modifier.padding(16.dp),
-                        fontWeight = FontWeight.Bold
                     )
                     LazyRow(
                         modifier = Modifier.padding(start = 8.dp),
@@ -157,8 +163,7 @@ private fun TopAppbar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color.White),
+            .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -177,8 +182,7 @@ private fun TopAppbar(
                 .align(Alignment.CenterVertically)
                 .weight(1f)
                 .padding(start = 8.dp, end = 8.dp),
-            fontSize = 20.sp,
-            fontWeight = FontWeight(1000),
+            style = titleLarge,
             overflow = Ellipsis,
             maxLines = 1,
         )
@@ -210,14 +214,12 @@ fun TopContents(product: Product) {
     ) {
         Text(
             text = product.sellerName,
-            color = colorResource(id = R.color.text_light_gray2)
+            color = gray4
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = product.name,
-            fontSize = 24.sp,
-            fontWeight = FontWeight.ExtraBold,
-            lineHeight = 30.sp,
+            style = HeadlineSmall,
             maxLines = 2
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -244,28 +246,19 @@ fun TopContents(product: Product) {
             if (product.basePrice != 0) {
                 Text(
                     text = "${product.discountRate.toInt()}% ",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight(500)
-                    ),
-                    color = colorResource(id = R.color.blue_01),
+                    style = titleMedium,
+                    color = blue1,
                 )
             }
             Text(
                 text = insertComma(product.retailPrice),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(500)
-                ),
-                color = colorResource(id = R.color.text_light_gray),
+                style = titleMedium,
+                color = gray4,
             )
         }
         Text(
             text = insertComma(product.basePrice) + "원",
-            style = TextStyle(
-                fontSize = 24.sp,
-                fontWeight = FontWeight(1000)
-            ),
+            style = HeadlineSmall,
             color = colorResource(id = R.color.black),
         )
     }
