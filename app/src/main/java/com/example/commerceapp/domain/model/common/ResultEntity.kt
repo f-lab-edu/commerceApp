@@ -1,10 +1,9 @@
 package com.example.commerceapp.domain.model.common
 
-/**
- * paging된 응답 처리는?
- */
-sealed interface ResultEntity<T> {
-    data class Success<T>(val data: T) : ResultEntity<T>
-    data class Error<T>(val error: ErrorType, val message: String) : ResultEntity<T>
+typealias RootError = Error
+
+sealed interface ResultEntity<out D, out E: RootError> {
+    data class Success<out D, out E: RootError>(val data: D) : ResultEntity<D,E>
+    data class Error<out D, out E: RootError>(val error: DataError)  : ResultEntity<D,E>
 }
 
