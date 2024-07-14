@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,11 +48,13 @@ import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.ProductPreview
 
 @Composable
-fun HomeScreen(navController: NavController) {
-    val viewModel: HomeViewModel = hiltViewModel()
+fun HomeScreen(
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel()
+) {
     val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
-
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
+
     LazyColumn(
         modifier = Modifier
             .background(Color.White)
@@ -98,7 +101,7 @@ private fun HomeAppbar() {
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = "Page title",
+            text = stringResource(R.string.home_title),
             modifier = Modifier.align(Alignment.CenterVertically),
             fontSize = 20.sp,
             fontWeight = FontWeight(1000)
@@ -106,7 +109,7 @@ private fun HomeAppbar() {
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 painter = painterResource(id = R.drawable.ic__shopping_cart),
-                contentDescription = "장바구니"
+                contentDescription = stringResource(R.string.cart)
             )
         }
     }
@@ -122,7 +125,7 @@ fun HeaderSection() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "오늘의 할인상품",
+                text = stringResource(R.string.today_deals),
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold // 수정된 FontWeight 값
@@ -133,7 +136,7 @@ fun HeaderSection() {
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic__right_arrow),
-                    contentDescription = "더보기"
+                    contentDescription = stringResource(R.string.more)
                 )
             }
         }
@@ -163,7 +166,7 @@ fun EventProductList(products: List<ProductPreview>, onItemClick: (String) -> Un
 
 @Composable
 fun EmptyProductList() {
-    Text(text = "목록이 없습니다.")
+    Text(text = stringResource(R.string.empty_list))
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
@@ -181,7 +184,7 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
                 .fillMaxWidth()
                 .aspectRatio(1f),
             model = productPreview.mainImageUrl,
-            contentDescription = "상품사진",
+            contentDescription = stringResource(R.string.product_image),
             contentScale = ContentScale.Crop
         )
         Text(
@@ -194,7 +197,7 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
         ) {
             Text(
-                text = "${productPreview.discountRate}% ",
+                text = "${productPreview.discountRate.toInt()}% ",
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight(1000)
@@ -234,7 +237,10 @@ fun HomeItemRow(row: List<ProductPreview>, onItemClick: (String) -> Unit) {
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HomeItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
+fun HomeItemCard(
+    productPreview: ProductPreview,
+    onClick: (String) -> Unit
+) {
     Column(modifier = Modifier
         .fillMaxWidth()
         .padding(4.dp)
@@ -246,11 +252,11 @@ fun HomeItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(8.dp)),
             model = productPreview.mainImageUrl,
-            contentDescription = "상품사진",
+            contentDescription = stringResource(R.string.product_image),
             contentScale = ContentScale.Crop
         )
         Text(
-            text = productPreview.name.split(" ")[0],
+            text = productPreview.name.split(" ")[0].drop(1).dropLast(1),
             style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
             modifier = Modifier.padding(top = 8.dp),
             color = colorResource(id = R.color.text_light_gray)
@@ -300,7 +306,7 @@ fun HomeItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
-                    text = "특가",
+                    text = stringResource(R.string.promotions),
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(0.dp),
@@ -335,7 +341,7 @@ fun PreviewItemCard() {
                 .size(180.dp)
                 .clip(RoundedCornerShape(8.dp)),
             model = productPreview.mainImageUrl,
-            contentDescription = "상품사진",
+            contentDescription = stringResource(R.string.product_image),
             contentScale = ContentScale.Crop
         )
         Text(
@@ -387,7 +393,7 @@ fun PreviewItemCard() {
                 contentPadding = PaddingValues(0.dp)
             ) {
                 Text(
-                    text = "특가",
+                    text = stringResource(R.string.promotions),
                     color = Color.White,
                     fontSize = 12.sp,
                     modifier = Modifier.padding(0.dp),

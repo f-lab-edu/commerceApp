@@ -18,5 +18,5 @@ data class Product(
     val productVerticalSmallUrl: String,
     val masterProductCode: String,
     val masterProductName: String,
-    val dealProducts: List<String>
+    val dealProducts: List<Long>
 )

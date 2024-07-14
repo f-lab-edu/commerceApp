@@ -4,6 +4,7 @@ import com.example.commerceapp.data.remote.model.mapper.ProductMapper
 import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.data.remote.model.mapper.UserMapper
 import com.example.commerceapp.data.remote.model.mapper.UserPreviewMapper
+import com.example.commerceapp.domain.model.product.ProductHandler
 import com.example.commerceapp.domain.model.product.ProductPreviewHandler
 import com.example.commerceapp.domain.repository.ProductRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,7 +41,12 @@ class DataModule {
     }
 
     @Provides
-    fun provideErrorHandler(): ProductPreviewHandler {
+    fun providePreviewErrorHandler(): ProductPreviewHandler {
         return ProductPreviewHandler()
+    }
+
+    @Provides
+    fun provideProductErrorHandler(): ProductHandler {
+        return ProductHandler()
     }
 }
