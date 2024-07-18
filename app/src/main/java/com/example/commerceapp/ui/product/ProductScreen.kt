@@ -1,6 +1,7 @@
 package com.example.commerceapp.ui.product
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,13 +14,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +34,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow.Companion.Ellipsis
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,6 +56,7 @@ import com.example.commerceapp.ui.theme.titleLarge
 import com.example.commerceapp.ui.theme.titleMedium
 import com.example.commerceapp.ui.theme.white
 import com.gowtham.ratingbar.RatingBar
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
@@ -66,88 +72,136 @@ fun ProductScreen(
         viewModel.getProduct(productNo)
     }
 
-    Scaffold(
-        topBar = { TopAppbar(navController, uiState.product.name) },
-        bottomBar = {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_heart),
-                        contentDescription = stringResource(R.string.likes)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = "12,345")
-                }
-                Spacer(modifier = Modifier.width(4.dp))
-                Button(
-                    colors = ButtonColors(
-                        containerColor = blue1,
-                        contentColor = white,
-                        disabledContentColor = white,
-                        disabledContainerColor = gray2
-                    ),
-                    onClick = {},
+    InitLoadingAndError(state = uiState.isLoading,
+        onDismiss = { navController.navigateUp() },
+        onConfirmation = { navController.navigateUp() }
+    )
+    if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
+        Scaffold(
+            topBar = { TopAppbar(navController, uiState.product.name) },
+            bottomBar = {
+                Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(45.dp)
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.Bottom
                 ) {
-                    Text(text = stringResource(R.string.checkout))
-                }
-            }
-        }
-    ) {
-        LazyColumn(
-            Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            item(uiState.isLoading) {
-                TopContents(uiState.product)
-            }
-
-            item(uiState.product.no) {
-                HorizontalDivider(thickness = 8.dp, color = gray1)
-                Column {
-                    Text(
-                        text = stringResource(R.string.product_info),
-                        style = titleLarge,
-                        modifier = Modifier.padding(16.dp),
-                    )
-                    Text(text = uiState.product.shortDescription)
-                    GlideImage(
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_heart),
+                            contentDescription = stringResource(R.string.likes)
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(text = "12,345")
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Button(
+                        colors = ButtonColors(
+                            containerColor = blue1,
+                            contentColor = white,
+                            disabledContentColor = white,
+                            disabledContainerColor = gray2
+                        ),
+                        onClick = {},
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        model = uiState.product.productVerticalSmallUrl,
-                        loading = placeholder(R.drawable.iv__placeholder),
-                        contentDescription = stringResource(R.string.checkout),
-                        contentScale = ContentScale.Crop
-                    )
+                            .fillMaxWidth()
+                            .height(45.dp)
+                    ) {
+                        Text(text = stringResource(R.string.checkout))
+                    }
                 }
             }
-            if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
-                item {
-                    Text(
-                        text = stringResource(R.string.reated_products),
-                        style = titleLarge,
-                        modifier = Modifier.padding(16.dp),
-                    )
-                    LazyRow(
-                        modifier = Modifier.padding(start = 8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(uiState.product.relatedProducts) { product ->
-                            EventItemCard(
-                                productPreview = product,
-                                onClick = { onItemClick(uiState.product.no) })
+        ) {
+            LazyColumn(
+                Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
+                item(uiState.isLoading) {
+                    TopContents(uiState.product)
+                }
+
+                item(uiState.product.no) {
+                    HorizontalDivider(thickness = 8.dp, color = gray1)
+                    Column {
+                        Text(
+                            text = stringResource(R.string.product_info),
+                            style = titleLarge,
+                            modifier = Modifier.padding(16.dp),
+                        )
+                        Text(text = uiState.product.shortDescription)
+                        GlideImage(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            model = uiState.product.productVerticalSmallUrl,
+                            loading = placeholder(R.drawable.iv__placeholder),
+                            contentDescription = stringResource(R.string.checkout),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+                if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
+                    item {
+                        Text(
+                            text = stringResource(R.string.reated_products),
+                            style = titleLarge,
+                            modifier = Modifier.padding(16.dp),
+                        )
+                        LazyRow(
+                            modifier = Modifier.padding(start = 8.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            items(uiState.product.relatedProducts) { product ->
+                                EventItemCard(
+                                    productPreview = product,
+                                    onClick = { onItemClick(uiState.product.no) })
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun InitLoadingAndError(
+    state: ProductViewModel.ProductState, onDismiss: () -> Unit,
+    onConfirmation: () -> Unit,
+) {
+    when (state) {
+        ProductViewModel.ProductState.LOADING -> CircularProgressBar()
+        ProductViewModel.ProductState.ERROR -> {
+            ErrorDialog(
+                onDismiss = onDismiss,
+                onConfirmation = onConfirmation,
+                dialogText = stringResource(R.string.error_dialog_contents_retry)
+            )
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+fun CircularProgressBar() {
+    Box(
+        Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.size(100.dp),
+            color = blue1,
+            strokeWidth = 10.dp,
+        )
+    }
+}
+
+suspend fun loadProgress(updateProgress: (Float) -> Unit) {
+    for (i in 1..100) {
+        updateProgress(i.toFloat() / 100)
+        delay(100)
     }
 }
 
@@ -258,4 +312,31 @@ fun TopContents(product: Product) {
             color = colorResource(id = R.color.black),
         )
     }
+}
+
+@Composable
+fun ErrorDialog(
+    onDismiss: () -> Unit,
+    onConfirmation: () -> Unit,
+    dialogText: String,
+) {
+    AlertDialog(
+        text = { Text(text = dialogText) },
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = onConfirmation) {
+                Text("확인")
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+fun AlertDialogExamplePreview() {
+    ErrorDialog(
+        onDismiss = {},
+        onConfirmation = {},
+        dialogText = stringResource(R.string.error_dialog_contents_retry)
+    )
 }
