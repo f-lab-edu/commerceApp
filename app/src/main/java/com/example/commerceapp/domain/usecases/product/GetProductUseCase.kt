@@ -18,8 +18,6 @@ class GetProductUseCase @Inject constructor(
     private val repository: ProductRepository,
     private val errorHandler: ProductHandler
 ) {
-    private val RELATED_PRODUCT_SIZE = 5
-
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun invoke(id: String) =
         repository.getProduct(id).flatMapConcat { product ->
@@ -50,5 +48,9 @@ class GetProductUseCase @Inject constructor(
                 if (it.isNotEmpty()) productDetail = productDetail.copy(relatedProducts = it)
                 productDetail
             }
+    }
+
+    companion object {
+        const val RELATED_PRODUCT_SIZE = 5
     }
 }
