@@ -2,8 +2,6 @@ package com.example.commerceapp.domain.usecases.product
 
 import com.example.commerceapp.domain.extension.mapToResultEntity
 import com.example.commerceapp.domain.model.common.DataError
-import com.example.commerceapp.domain.model.common.Error
-import com.example.commerceapp.domain.model.common.InvalidDataException
 import com.example.commerceapp.domain.model.common.ResultEntity
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.Product
@@ -11,7 +9,8 @@ import com.example.commerceapp.domain.model.product.ProductHandler
 import com.example.commerceapp.domain.repository.ProductRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -22,14 +21,17 @@ class GetProductUseCase @Inject constructor(
     private val RELATED_PRODUCT_SIZE = 5
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    suspend fun invoke(id: String): Flow<ResultEntity<Product, Error>> =
-        repository.getProduct(id).flatMapLatest { product ->
-            checkProductValidation(product)
-            searchRelatedProductIfKeywordIsValid(product)
-        }.mapToResultEntity(errorHandler)
+    suspend fun invoke(id: String) =
+        repository.getProduct(id).flatMapConcat { product ->
+            if (isNotValid(product)) {
+                flow { ResultEntity.Error<Product, DataError>(error = DataError.VALIDATION.MISSING_VALUE) }
+            } else {
+                searchRelatedProductIfKeywordIsValid(product).mapToResultEntity(errorHandler)
+            }
+        }
 
-    private fun checkProductValidation(product: Product) {
-        if (product.name.isEmpty() || product.name.isBlank()) throw InvalidDataException(DataError.VALIDATION.MISSING_VALUE)
+    private fun isNotValid(product: Product): Boolean {
+        return (product.name.isEmpty() || product.name.isBlank())
     }
 
     private suspend fun searchRelatedProductIfKeywordIsValid(product: Product): Flow<Product> {
