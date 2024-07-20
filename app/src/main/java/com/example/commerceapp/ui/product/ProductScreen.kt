@@ -198,13 +198,6 @@ fun CircularProgressBar() {
     }
 }
 
-suspend fun loadProgress(updateProgress: (Float) -> Unit) {
-    for (i in 1..100) {
-        updateProgress(i.toFloat() / 100)
-        delay(100)
-    }
-}
-
 @Composable
 private fun TopAppbar(
     navController: NavController,
