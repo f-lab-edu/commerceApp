@@ -27,6 +27,11 @@ val titleLarge = TextStyle(
     lineHeight = 28.sp,
     fontWeight = FontWeight.Bold
 )
+val titleMediumLarge = TextStyle(
+    fontSize = 18.sp,
+    lineHeight = 26.sp,
+    fontWeight = FontWeight.Bold
+)
 val titleMedium = TextStyle(
     fontSize = 16.sp,
     lineHeight = 24.sp,
@@ -51,5 +56,10 @@ val bodyMedium = TextStyle(
 val bodySmall = TextStyle(
     fontSize = 14.sp,
     lineHeight = 20.sp,
+    fontWeight = FontWeight.Normal
+)
+val bodyExtraSmall = TextStyle(
+    fontSize = 12.sp,
+    lineHeight = 16.sp,
     fontWeight = FontWeight.Normal
 )
