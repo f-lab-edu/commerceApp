@@ -46,13 +46,18 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.ProductPreview
+import com.example.commerceapp.ui.product.CircularProgressBar
+import com.example.commerceapp.ui.theme.blue1
+import com.example.commerceapp.ui.theme.gray4
+import com.example.commerceapp.ui.theme.pink1
+import com.example.commerceapp.ui.theme.white
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
 
     LazyColumn(
@@ -65,13 +70,13 @@ fun HomeScreen(
             VerticalDivider(height = 8.dp)
             HeaderSection()
         }
-        if (uiState.value.isLoading) {
+        if (uiState.isLoading) {
             item { ProgressIndicator() }
         }
 
-        item(uiState.value.eventProducts) {
-            if (uiState.value.eventProducts.isNotEmpty()) EventProductList(
-                products = uiState.value.eventProducts, onItemClick = onItemClick
+        item(uiState.eventProducts) {
+            if (uiState.eventProducts.isNotEmpty()) EventProductList(
+                products = uiState.eventProducts, onItemClick = onItemClick
             )
             else EmptyProductList()
         }
@@ -80,8 +85,8 @@ fun HomeScreen(
             VerticalDivider(height = 16.dp)
         }
 
-        if (uiState.value.products.isNotEmpty()) {
-            uiState.value.products.forEach { rowProducts ->
+        if (uiState.products.isNotEmpty()) {
+            uiState.products.forEach { rowProducts ->
                 item(rowProducts) {
                     HomeItemRow(row = rowProducts, onItemClick = onItemClick)
                 }
@@ -108,7 +113,7 @@ private fun HomeAppbar() {
         )
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__shopping_cart),
+                painter = painterResource(id = R.drawable.ic_shopping_cart),
                 contentDescription = stringResource(R.string.cart)
             )
         }
@@ -135,7 +140,7 @@ fun HeaderSection() {
             )
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic__right_arrow),
+                    painter = painterResource(id = R.drawable.ic_right_arrow),
                     contentDescription = stringResource(R.string.more)
                 )
             }
@@ -202,7 +207,7 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight(1000)
                 ),
-                color = colorResource(id = R.color.blue_01),
+                color = blue1,
             )
             Text(
                 text = insertComma(productPreview.retailPrice),
@@ -210,7 +215,7 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight(1000)
                 ),
-                color = colorResource(id = R.color.text_light_gray),
+                color = gray4,
             )
         }
     }
@@ -245,6 +250,7 @@ fun HomeItemCard(
         .fillMaxWidth()
         .padding(4.dp)
         .clickable { onClick(productPreview.no) }
+        .background(white)
     ) {
         GlideImage(
             modifier = Modifier
@@ -259,7 +265,7 @@ fun HomeItemCard(
             text = productPreview.name.split(" ")[0].drop(1).dropLast(1),
             style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
             modifier = Modifier.padding(top = 8.dp),
-            color = colorResource(id = R.color.text_light_gray)
+            color = gray4
         )
         Text(
             text = productPreview.name,
@@ -277,7 +283,7 @@ fun HomeItemCard(
                         fontSize = 16.sp,
                         fontWeight = FontWeight(1000)
                     ),
-                    color = colorResource(id = R.color.blue_01),
+                    color = blue1,
                 )
             }
             Text(
@@ -294,10 +300,10 @@ fun HomeItemCard(
         ) {
             Button(
                 onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01)
+                    pink1,
+                    pink1,
+                    pink1,
+                    pink1
                 ),
                 modifier = Modifier
                     .padding(0.dp)
@@ -348,7 +354,7 @@ fun PreviewItemCard() {
             text = productPreview.name.split(" ")[0],
             style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
             modifier = Modifier.padding(top = 8.dp),
-            color = colorResource(id = R.color.text_light_gray)
+            color = gray4
         )
         Text(
             text = productPreview.name,
@@ -365,7 +371,7 @@ fun PreviewItemCard() {
                     fontSize = 16.sp,
                     fontWeight = FontWeight(1000)
                 ),
-                color = colorResource(id = R.color.blue_01),
+                color = blue1,
             )
             Text(
                 text = insertComma(productPreview.retailPrice),
@@ -381,10 +387,10 @@ fun PreviewItemCard() {
         ) {
             Button(
                 onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01)
+                    pink1,
+                    pink1,
+                    pink1,
+                    pink1
                 ),
                 modifier = Modifier
                     .padding(0.dp)
