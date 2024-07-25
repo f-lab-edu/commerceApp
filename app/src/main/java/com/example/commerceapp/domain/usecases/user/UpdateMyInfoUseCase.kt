@@ -1,6 +1,7 @@
 package com.example.commerceapp.domain.usecases.user
 
 import com.example.commerceapp.domain.extension.mapToResultEntity
+import com.example.commerceapp.domain.model.common.Error
 import com.example.commerceapp.domain.model.common.ErrorHandler
 import com.example.commerceapp.domain.model.common.ResultEntity
 import com.example.commerceapp.domain.model.common.request.UserUpdateParam
@@ -12,7 +13,7 @@ class UpdateMyInfoUseCase(
     private val repository: UserRepository,
     private val userExceptionHandler: ErrorHandler
 ) {
-    suspend operator fun invoke(parameter: UserUpdateParam): Flow<ResultEntity<User>> =
+    suspend operator fun invoke(parameter: UserUpdateParam): Flow<ResultEntity<User, Error>> =
         repository.updateMyInfo(parameter).mapToResultEntity(userExceptionHandler)
 
 }
