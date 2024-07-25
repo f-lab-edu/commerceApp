@@ -1,5 +1,6 @@
 package com.example.commerceapp.domain.model.common
 
 interface ErrorHandler {
-    fun <T>handle(throwable: Throwable): ResultEntity.Error<T>
+    fun <D,E>handle(throwable: Throwable): ResultEntity<D, Error>
+    fun <D,E>handle(throwable: InvalidDataException): ResultEntity<D, Error>
 }
