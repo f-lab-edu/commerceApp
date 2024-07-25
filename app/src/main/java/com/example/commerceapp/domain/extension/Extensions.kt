@@ -1,15 +1,9 @@
 package com.example.commerceapp.domain.extension
 
+import com.example.commerceapp.domain.model.common.DataError
+import com.example.commerceapp.domain.model.common.DataError.NETWORK
+import com.example.commerceapp.domain.model.common.Error
 import com.example.commerceapp.domain.model.common.ErrorHandler
-import com.example.commerceapp.domain.model.common.ErrorType
-import com.example.commerceapp.domain.model.common.ErrorType.CONFLICT
-import com.example.commerceapp.domain.model.common.ErrorType.FORBIDDEN
-import com.example.commerceapp.domain.model.common.ErrorType.INVALID
-import com.example.commerceapp.domain.model.common.ErrorType.NETWORK_ERROR
-import com.example.commerceapp.domain.model.common.ErrorType.NOT_FOUND
-import com.example.commerceapp.domain.model.common.ErrorType.SERVER_ERROR
-import com.example.commerceapp.domain.model.common.ErrorType.UNAUTHORIZED
-import com.example.commerceapp.domain.model.common.ErrorType.UNKNOWN_ERROR
 import com.example.commerceapp.domain.model.common.ResultEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -18,30 +12,29 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-fun Throwable.toErrorType(): ErrorType {
+fun Throwable.toErrorType(): DataError {
     return when (this) {
         is HttpException -> this.mapToErrorType(code())
-        is ConnectException, is SocketTimeoutException, is UnknownHostException -> NETWORK_ERROR
-        else -> UNKNOWN_ERROR
+        is ConnectException, is SocketTimeoutException, is UnknownHostException -> NETWORK.NO_INTERNET
+        else -> NETWORK.UNKNOWN
     }
 }
 
-fun HttpException.mapToErrorType(code: Int): ErrorType = when (code) {
-    400 -> INVALID
-    401 -> UNAUTHORIZED
-    404 -> NOT_FOUND
-    403 -> FORBIDDEN
-    409 -> CONFLICT
-    500 -> SERVER_ERROR
-    else -> UNKNOWN_ERROR
-
+fun HttpException.mapToErrorType(code: Int): DataError = when (code) {
+    400 -> NETWORK.INVALID
+    401 -> NETWORK.UNAUTHORIZED
+    404 -> NETWORK.NOT_FOUND
+    403 -> NETWORK.FORBIDDEN
+    409 -> NETWORK.CONFLICT
+    500 -> NETWORK.SERVER_ERROR
+    else -> NETWORK.UNKNOWN
 }
 
-fun <T> Flow<T>.mapToResultEntity(handler: ErrorHandler): Flow<ResultEntity<T>> =
+fun <D> Flow<D>.mapToResultEntity(handler: ErrorHandler): Flow<ResultEntity<D, Error>> =
     map {
         try {
-            ResultEntity.Success(it)
+            ResultEntity.Success<D, Error>(it)
         } catch (t: Throwable) {
-            handler.handle(t)
+            handler.handle<D, Error>(t)
         }
     }
