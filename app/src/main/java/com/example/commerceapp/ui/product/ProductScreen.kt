@@ -56,9 +56,7 @@ import com.example.commerceapp.ui.theme.titleLarge
 import com.example.commerceapp.ui.theme.titleMedium
 import com.example.commerceapp.ui.theme.white
 import com.gowtham.ratingbar.RatingBar
-import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun ProductScreen(
     navController: NavController,
@@ -80,35 +78,7 @@ fun ProductScreen(
         Scaffold(
             topBar = { TopAppbar(navController, uiState.product.name) },
             bottomBar = {
-                Row(
-                    modifier = Modifier
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.Bottom
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_heart),
-                            contentDescription = stringResource(R.string.likes)
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = "12,345")
-                    }
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Button(
-                        colors = ButtonColors(
-                            containerColor = blue1,
-                            contentColor = white,
-                            disabledContentColor = white,
-                            disabledContainerColor = gray2
-                        ),
-                        onClick = {},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(45.dp)
-                    ) {
-                        Text(text = stringResource(R.string.checkout))
-                    }
-                }
+                BottomBar()
             }
         ) {
             LazyColumn(
@@ -121,41 +91,11 @@ fun ProductScreen(
                 }
 
                 item(uiState.product.no) {
-                    HorizontalDivider(thickness = 8.dp, color = gray1)
-                    Column {
-                        Text(
-                            text = stringResource(R.string.product_info),
-                            style = titleLarge,
-                            modifier = Modifier.padding(16.dp),
-                        )
-                        Text(text = uiState.product.shortDescription)
-                        GlideImage(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            model = uiState.product.productVerticalSmallUrl,
-                            loading = placeholder(R.drawable.iv__placeholder),
-                            contentDescription = stringResource(R.string.checkout),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
+                    ProductInfo(uiState.product)
                 }
                 if (uiState.isLoading == ProductViewModel.ProductState.SUCCESS) {
                     item {
-                        Text(
-                            text = stringResource(R.string.reated_products),
-                            style = titleLarge,
-                            modifier = Modifier.padding(16.dp),
-                        )
-                        LazyRow(
-                            modifier = Modifier.padding(start = 8.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            items(uiState.product.relatedProducts) { product ->
-                                EventItemCard(
-                                    productPreview = product,
-                                    onClick = { onItemClick(uiState.product.no) })
-                            }
-                        }
+                        RelatedProducts(uiState.product, onItemClick)
                     }
                 }
             }
@@ -179,6 +119,80 @@ fun InitLoadingAndError(
         }
 
         else -> {}
+    }
+}
+
+@Composable
+fun RelatedProducts(product: Product, onItemClick: (String) -> Unit) {
+    Text(
+        text = stringResource(R.string.reated_products),
+        style = titleLarge,
+        modifier = Modifier.padding(16.dp),
+    )
+    LazyRow(
+        modifier = Modifier.padding(start = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(product.relatedProducts) { related ->
+            EventItemCard(
+                productPreview = related,
+                onClick = { onItemClick(product.no) })
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+fun ProductInfo(product: Product) {
+    HorizontalDivider(thickness = 8.dp, color = gray1)
+    Column {
+        Text(
+            text = stringResource(R.string.product_info),
+            style = titleLarge,
+            modifier = Modifier.padding(16.dp),
+        )
+        Text(text = product.shortDescription)
+        GlideImage(
+            modifier = Modifier
+                .fillMaxWidth(),
+            model = product.productVerticalSmallUrl,
+            loading = placeholder(R.drawable.iv__placeholder),
+            contentDescription = stringResource(R.string.checkout),
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun BottomBar() {
+    Row(
+        modifier = Modifier
+            .padding(8.dp),
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_heart),
+                contentDescription = stringResource(R.string.likes)
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(text = "12,345")
+        }
+        Spacer(modifier = Modifier.width(4.dp))
+        Button(
+            colors = ButtonColors(
+                containerColor = blue1,
+                contentColor = white,
+                disabledContentColor = white,
+                disabledContainerColor = gray2
+            ),
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp)
+        ) {
+            Text(text = stringResource(R.string.checkout))
+        }
     }
 }
 
