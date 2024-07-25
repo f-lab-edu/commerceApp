@@ -9,7 +9,7 @@ enum class BottomNavigationScreen(
     @StringRes val stringResourceId: Int,
     @DrawableRes val iconResourceId: Int
 ) {
-    Home("home", R.string.home, R.drawable.ic__home),
-    Search("search", R.string.search, R.drawable.ic__search),
-    Profile("profile", R.string.profile, R.drawable.ic__user)
+    Home("home", R.string.home, R.drawable.ic_home),
+    Search("search", R.string.search, R.drawable.ic_search),
+    Profile("profile", R.string.profile, R.drawable.ic_user)
 }
