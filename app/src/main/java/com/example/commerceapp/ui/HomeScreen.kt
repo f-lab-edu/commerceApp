@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -25,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,12 +33,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -46,13 +43,22 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.commerceapp.R
 import com.example.commerceapp.domain.model.product.ProductPreview
+import com.example.commerceapp.ui.theme.blue1
+import com.example.commerceapp.ui.theme.bodyExtraSmall
+import com.example.commerceapp.ui.theme.bodyMedium
+import com.example.commerceapp.ui.theme.gray4
+import com.example.commerceapp.ui.theme.pink1
+import com.example.commerceapp.ui.theme.titleLarge
+import com.example.commerceapp.ui.theme.titleMedium
+import com.example.commerceapp.ui.theme.titleMediumLarge
+import com.example.commerceapp.ui.theme.white
 
 @Composable
 fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.homeUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.homeUiState.collectAsStateWithLifecycle()
     val onItemClick = { path: String -> navController.navigate("product/${path}") }
 
     LazyColumn(
@@ -65,13 +71,13 @@ fun HomeScreen(
             VerticalDivider(height = 8.dp)
             HeaderSection()
         }
-        if (uiState.value.isLoading) {
+        if (uiState.isLoading) {
             item { ProgressIndicator() }
         }
 
-        item(uiState.value.eventProducts) {
-            if (uiState.value.eventProducts.isNotEmpty()) EventProductList(
-                products = uiState.value.eventProducts, onItemClick = onItemClick
+        item(uiState.eventProducts) {
+            if (uiState.eventProducts.isNotEmpty()) EventProductList(
+                products = uiState.eventProducts, onItemClick = onItemClick
             )
             else EmptyProductList()
         }
@@ -80,8 +86,8 @@ fun HomeScreen(
             VerticalDivider(height = 16.dp)
         }
 
-        if (uiState.value.products.isNotEmpty()) {
-            uiState.value.products.forEach { rowProducts ->
+        if (uiState.products.isNotEmpty()) {
+            uiState.products.forEach { rowProducts ->
                 item(rowProducts) {
                     HomeItemRow(row = rowProducts, onItemClick = onItemClick)
                 }
@@ -103,12 +109,11 @@ private fun HomeAppbar() {
         Text(
             text = stringResource(R.string.home_title),
             modifier = Modifier.align(Alignment.CenterVertically),
-            fontSize = 20.sp,
-            fontWeight = FontWeight(1000)
+            style = titleLarge
         )
         IconButton(onClick = { /*TODO*/ }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__shopping_cart),
+                painter = painterResource(id = R.drawable.ic_shopping_cart),
                 contentDescription = stringResource(R.string.cart)
             )
         }
@@ -126,16 +131,13 @@ fun HeaderSection() {
         ) {
             Text(
                 text = stringResource(R.string.today_deals),
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold // 수정된 FontWeight 값
-                ),
+                style = titleMediumLarge,
                 color = colorResource(id = R.color.text_black),
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = { /*TODO*/ }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic__right_arrow),
+                    painter = painterResource(id = R.drawable.ic_right_arrow),
                     contentDescription = stringResource(R.string.more)
                 )
             }
@@ -148,15 +150,15 @@ fun HeaderSection() {
 fun ProgressIndicator() {
     CircularProgressIndicator(
         modifier = Modifier.width(64.dp),
-        color = MaterialTheme.colorScheme.secondary
+        color = MaterialTheme.colorScheme.secondary,
+        trackColor = MaterialTheme.colorScheme.surfaceVariant,
     )
 }
 
 @Composable
 fun EventProductList(products: List<ProductPreview>, onItemClick: (String) -> Unit) {
     LazyRow(
-        modifier = Modifier.padding(start = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        contentPadding = PaddingValues(8.dp),
     ) {
         items(products) { product ->
             EventItemCard(productPreview = product, onItemClick)
@@ -189,7 +191,8 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
         )
         Text(
             text = productPreview.name,
-            style = TextStyle(fontSize = 16.sp, color = Color.Black),
+            style = bodyMedium,
+            color = Color.Black,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -198,19 +201,13 @@ fun EventItemCard(productPreview: ProductPreview, onClick: (String) -> Unit) {
         ) {
             Text(
                 text = "${productPreview.discountRate.toInt()}% ",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(1000)
-                ),
-                color = colorResource(id = R.color.blue_01),
+                style = titleMedium,
+                color = blue1,
             )
             Text(
                 text = insertComma(productPreview.retailPrice),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(1000)
-                ),
-                color = colorResource(id = R.color.text_light_gray),
+                style = titleMedium,
+                color = gray4,
             )
         }
     }
@@ -245,6 +242,7 @@ fun HomeItemCard(
         .fillMaxWidth()
         .padding(4.dp)
         .clickable { onClick(productPreview.no) }
+        .background(white)
     ) {
         GlideImage(
             modifier = Modifier
@@ -257,13 +255,14 @@ fun HomeItemCard(
         )
         Text(
             text = productPreview.name.split(" ")[0].drop(1).dropLast(1),
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
+            style = bodyExtraSmall,
             modifier = Modifier.padding(top = 8.dp),
-            color = colorResource(id = R.color.text_light_gray)
+            color = gray4
         )
         Text(
             text = productPreview.name,
-            style = TextStyle(fontSize = 16.sp, color = Color.Black),
+            style = bodyMedium,
+            color = Color.Black,
             maxLines = 1,
             modifier = Modifier.padding(top = 8.dp)
         )
@@ -273,31 +272,27 @@ fun HomeItemCard(
             if (productPreview.discountRate.toInt() > 0) {
                 Text(
                     text = "${productPreview.discountRate}% ",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight(1000)
-                    ),
-                    color = colorResource(id = R.color.blue_01),
+                    style = titleMedium,
+                    color = blue1,
                 )
             }
             Text(
                 text = insertComma(productPreview.retailPrice),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight(1000)
-                )
+                style = titleMedium,
+                color = Color.DarkGray,
             )
         }
         Row(
             modifier = Modifier.padding(bottom = 8.dp)
         ) {
             Button(
-                onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01)
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonColors(
+                    pink1,
+                    pink1,
+                    pink1,
+                    pink1
                 ),
                 modifier = Modifier
                     .padding(0.dp)
@@ -308,9 +303,8 @@ fun HomeItemCard(
                 Text(
                     text = stringResource(R.string.promotions),
                     color = Color.White,
-                    fontSize = 12.sp,
                     modifier = Modifier.padding(0.dp),
-                    style = TextStyle(lineHeight = 16.sp)
+                    style = bodyExtraSmall
                 )
             }
         }
@@ -318,7 +312,6 @@ fun HomeItemCard(
 }
 
 @Preview(showBackground = true, backgroundColor = 0xFFF0F0F0)
-@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun PreviewItemCard() {
     val productPreview = ProductPreview(
@@ -334,72 +327,5 @@ fun PreviewItemCard() {
         reviewCount = 0,
         adultVerificationFailed = false
     )
-
-    Column {
-        GlideImage(
-            modifier = Modifier
-                .size(180.dp)
-                .clip(RoundedCornerShape(8.dp)),
-            model = productPreview.mainImageUrl,
-            contentDescription = stringResource(R.string.product_image),
-            contentScale = ContentScale.Crop
-        )
-        Text(
-            text = productPreview.name.split(" ")[0],
-            style = TextStyle(fontSize = 12.sp, fontWeight = FontWeight(100)),
-            modifier = Modifier.padding(top = 8.dp),
-            color = colorResource(id = R.color.text_light_gray)
-        )
-        Text(
-            text = productPreview.name,
-            style = TextStyle(fontSize = 16.sp, color = Color.Black),
-            maxLines = 1,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-        Row(
-            Modifier.padding(top = 8.dp, bottom = 8.dp)
-        ) {
-            Text(
-                text = "${productPreview.discountRate}%  ",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight(1000)
-                ),
-                color = colorResource(id = R.color.blue_01),
-            )
-            Text(
-                text = insertComma(productPreview.retailPrice),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    color = Color.DarkGray,
-                    fontWeight = FontWeight(1000)
-                )
-            )
-        }
-        Row(
-            Modifier.padding(bottom = 8.dp)
-        ) {
-            Button(
-                onClick = { /*TODO*/ }, shape = RoundedCornerShape(8.dp), colors = ButtonColors(
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01),
-                    colorResource(id = R.color.pink_01)
-                ),
-                modifier = Modifier
-                    .padding(0.dp)
-                    .height(25.dp)
-                    .width(35.dp),
-                contentPadding = PaddingValues(0.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.promotions),
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(0.dp),
-                    style = TextStyle(lineHeight = 16.sp)
-                )
-            }
-        }
-    }
+    HomeItemCard(productPreview, {})
 }

@@ -100,7 +100,7 @@ fun SearchAppbar(
     ) {
         IconButton(onClick = { onLeftIconClick() }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__left_arrow),
+                painter = painterResource(id = R.drawable.ic_left_arrow),
                 contentDescription = "뒤로가기"
             )
         }
@@ -123,7 +123,7 @@ fun SearchAppbar(
 
         IconButton(onClick = { submit(query) }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__search),
+                painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = "검색"
             )
         }

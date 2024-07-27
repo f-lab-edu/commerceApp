@@ -98,7 +98,7 @@ fun SearchBar(onItemClick: (String) -> Unit) {
         )
         IconButton(onClick = { onItemClick(" ") }) {
             Icon(
-                painter = painterResource(id = R.drawable.ic__search),
+                painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = "검색"
             )
         }
