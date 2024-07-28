@@ -105,7 +105,7 @@ class HomeViewModel @Inject constructor(
     }
 
     data class HomeUiState(
-        val isLoading: Boolean = true,
+        val isLoading: Boolean,
         val products: List<List<ProductPreview>>,
         val eventProducts: List<ProductPreview>
     )
