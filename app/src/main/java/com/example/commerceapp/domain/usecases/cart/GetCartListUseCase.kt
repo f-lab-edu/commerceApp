@@ -1,19 +1,52 @@
 package com.example.commerceapp.domain.usecases.cart
 
+import com.example.commerceapp.data.remote.model.mapper.CartItemMapper
 import com.example.commerceapp.domain.extension.mapToResultEntity
+import com.example.commerceapp.domain.model.CartItem
+import com.example.commerceapp.domain.model.cart.DataErrorHandler
 import com.example.commerceapp.domain.model.common.Error
-import com.example.commerceapp.domain.model.common.ErrorHandler
-import com.example.commerceapp.domain.model.common.RequestParam
 import com.example.commerceapp.domain.model.common.ResultEntity
 import com.example.commerceapp.domain.model.product.ProductPreview
 import com.example.commerceapp.domain.repository.CartRepository
+import com.example.commerceapp.domain.repository.ProductRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.map
 
 data class GetCartListUseCase(
-    private val repository: CartRepository,
-    private val loginExceptionHandler: ErrorHandler
+    private val cartRepository: CartRepository<RequestParam>,
+    private val productRepository: ProductRepository,
+    private val dataErrorHandler: DataErrorHandler,
+    private val cartItemMapper: CartItemMapper
 ) {
-    suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<List<ProductPreview>, Error>> =
-        repository.getCartList(parameters).mapToResultEntity(loginExceptionHandler)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    suspend fun invoke(
+        parameters: RequestParam
+    ): Flow<ResultEntity<List<CartItem>, Error>> =
+        cartRepository.getCartList(parameters)
+            .flatMapConcat {
+                getCartItem(it)
+            }.mapToResultEntity(dataErrorHandler)
 
+    private suspend fun getCartItem(hashmap: HashMap<String, Long>): Flow<List<CartItem>> {
+        val lists = hashmap.keys.map { it.toLong() }
+        return productRepository.getProductPreview(lists)
+            .map { previewToCartItem(it, hashmap) }
+    }
+
+    private fun previewToCartItem(
+        productPreviews: List<ProductPreview>,
+        hashmap: HashMap<String, Long>
+    ): List<CartItem> {
+        return productPreviews.map { preview ->
+            cartItemMapper.mapToCartItem(preview, hashmap[preview.no]?.toInt() ?: 0)
+        }
+    }
+
+    data class RequestParam(
+        val userId: String,
+        val page: Int,
+        val perPage: Int
+    ) : com.example.commerceapp.domain.model.common.RequestParam
 }

@@ -1,5 +1,6 @@
 package com.example.commerceapp.data.remote
 
+import com.example.commerceapp.data.remote.model.mapper.CartItemMapper
 import com.example.commerceapp.data.remote.model.mapper.ProductMapper
 import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.data.remote.model.mapper.UserMapper
@@ -30,6 +31,9 @@ class DataModule {
 
     @Provides
     fun provideUserPreviewMapper() = UserPreviewMapper()
+
+    @Provides
+    fun provideCartItemMapper() = CartItemMapper()
 
     @Provides
     fun provideProductRepository(
