@@ -1,6 +1,7 @@
 package com.example.commerceapp.domain.usecases.product
 
 import com.example.commerceapp.domain.extension.mapToResultEntity
+import com.example.commerceapp.domain.model.common.Error
 import com.example.commerceapp.domain.model.common.ResultEntity
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.ProductPreview
@@ -15,6 +16,6 @@ class SearchProductsUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(
         searchParam: ProductSearchParam
-    ): Flow<ResultEntity<List<ProductPreview>>> =
+    ): Flow<ResultEntity<List<ProductPreview>,Error>> =
         repository.searchProduct(searchParam).mapToResultEntity(errorHandler)
 }

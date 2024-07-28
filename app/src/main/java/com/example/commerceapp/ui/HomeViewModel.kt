@@ -21,7 +21,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val searchProduct: SearchProductsUseCase
 ) : ViewModel() {
-
     private val _eventProducts = MutableStateFlow<List<ProductPreview>>(emptyList())
     private val _products = MutableStateFlow<List<ProductPreview>>(emptyList())
 
@@ -87,10 +86,11 @@ class HomeViewModel @Inject constructor(
                 when (it) {
                     is ResultEntity.Success -> {
                         onSuccess(it.data)
+                        it.data.forEach { println(it) }
                     }
 
                     is ResultEntity.Error -> {
-                        onError(it.message)
+                        onError(it.error.toString())
                     }
                 }
             }
