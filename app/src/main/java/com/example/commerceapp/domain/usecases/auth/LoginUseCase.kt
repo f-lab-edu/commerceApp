@@ -13,6 +13,6 @@ class LoginUseCase(
     private val repository: AuthRepository,
     private val loginExceptionHandler: ErrorHandler
 ) {
-    suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<UserPreview,Error>> =
+    suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<UserPreview, Error>> =
         repository.login(parameters).mapToResultEntity(loginExceptionHandler)
 }
