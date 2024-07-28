@@ -3,7 +3,7 @@ package com.example.commerceapp.domain.usecases.cart
 import com.example.commerceapp.data.remote.model.mapper.CartItemMapper
 import com.example.commerceapp.domain.extension.mapToResultEntity
 import com.example.commerceapp.domain.model.CartItem
-import com.example.commerceapp.domain.model.cart.DataErrorHandler
+import com.example.commerceapp.domain.model.common.DataErrorHandler
 import com.example.commerceapp.domain.model.common.Error
 import com.example.commerceapp.domain.model.common.ResultEntity
 import com.example.commerceapp.domain.model.product.ProductPreview

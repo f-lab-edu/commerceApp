@@ -1,10 +1,6 @@
-package com.example.commerceapp.domain.model.cart
+package com.example.commerceapp.domain.model.common
 
 import com.example.commerceapp.domain.extension.toErrorType
-import com.example.commerceapp.domain.model.common.DataError
-import com.example.commerceapp.domain.model.common.ErrorHandler
-import com.example.commerceapp.domain.model.common.InvalidDataException
-import com.example.commerceapp.domain.model.common.ResultEntity
 
 class DataErrorHandler : ErrorHandler {
     override fun <D, Error> handle(throwable: Throwable): ResultEntity.Error<D, DataError> {
