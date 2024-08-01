@@ -2,6 +2,7 @@ package com.example.commerceapp.domain.usecases.cart
 
 import com.example.commerceapp.data.remote.model.mapper.CartItemMapper
 import com.example.commerceapp.domain.extension.mapToResultEntity
+import com.example.commerceapp.domain.model.cart.Cart
 import com.example.commerceapp.domain.model.cart.CartItem
 import com.example.commerceapp.domain.model.common.DataErrorHandler
 import com.example.commerceapp.domain.model.common.Error
@@ -29,18 +30,18 @@ data class GetCartListUseCase(
                 getCartItem(it)
             }.mapToResultEntity(dataErrorHandler)
 
-    private suspend fun getCartItem(hashmap: HashMap<String, Long>): Flow<List<CartItem>> {
-        val lists = hashmap.keys.map { it.toLong() }
+    private suspend fun getCartItem(list: List<Cart>): Flow<List<CartItem>> {
+        val lists = list.map { it.no.toLong() }
         return productRepository.getProductPreview(lists)
-            .map { previewToCartItem(it, hashmap) }
+            .map { previewToCartItem(it, list) }
     }
 
     private fun previewToCartItem(
         productPreviews: List<ProductPreview>,
-        hashmap: HashMap<String, Long>
+        list: List<Cart>
     ): List<CartItem> {
         return productPreviews.map { preview ->
-            cartItemMapper.mapToCartItem(preview, hashmap[preview.no]?.toInt() ?: 0)
+            cartItemMapper.mapToCartItem(preview, list.find { it.no == preview.no }?.amount ?: 0)
         }
     }
 }

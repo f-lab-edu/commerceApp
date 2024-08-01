@@ -1,6 +1,8 @@
 package com.example.commerceapp.data.remote
 
+import com.example.commerceapp.data.remote.model.cart.CartDto
 import com.example.commerceapp.data.remote.model.mapper.CartMapper
+import com.example.commerceapp.domain.model.cart.Cart
 import com.example.commerceapp.domain.model.common.RequestParam
 import com.example.commerceapp.domain.repository.CartRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,15 +18,11 @@ class CartRepositoryImpl @Inject constructor(
 
     override suspend fun <CartRequestParam> getCartList(
         requestParam: CartRequestParam
-    ): Flow<HashMap<String, Long>> {
+    ): Flow<List<Cart>> {
         val param = requestParam as CartParam
-        return firestore.collection("cart").document(param.userId)
+        return firestore.collection("cart").document(param.userId).collection("cartItem")
             .snapshots()
-            .map { origin ->
-                val hashMap = HashMap<String, Long>()
-                origin.data?.keys?.forEach { key -> hashMap[key] = origin[key] as Long }
-                hashMap
-            }
+            .map { convertToCartList(it.toObjects(CartDto::class.java)) }
     }
 
     override suspend fun addToCart(requestParam: RequestParam): Flow<String> {
@@ -40,7 +38,8 @@ class CartRepositoryImpl @Inject constructor(
         val page: Int,
         val perPage: Int
     ) : CartRepository.CartRequestParam
+
+    private fun convertToCartList(dtos: List<CartDto>): List<Cart> {
+        return dtos.map { cartMapper.mapToEntity(it) }
+    }
 }
-
-
-
