@@ -2,7 +2,7 @@ package com.example.commerceapp.domain.usecases.cart
 
 import com.example.commerceapp.data.remote.model.mapper.CartItemMapper
 import com.example.commerceapp.domain.extension.mapToResultEntity
-import com.example.commerceapp.domain.model.CartItem
+import com.example.commerceapp.domain.model.cart.CartItem
 import com.example.commerceapp.domain.model.common.DataErrorHandler
 import com.example.commerceapp.domain.model.common.Error
 import com.example.commerceapp.domain.model.common.ResultEntity
@@ -15,14 +15,14 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 
 data class GetCartListUseCase(
-    private val cartRepository: CartRepository<RequestParam>,
+    private val cartRepository: CartRepository<CartRepository.CartRequestParam>,
     private val productRepository: ProductRepository,
     private val dataErrorHandler: DataErrorHandler,
     private val cartItemMapper: CartItemMapper
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     suspend fun invoke(
-        parameters: RequestParam
+        parameters: CartRepository.CartRequestParam
     ): Flow<ResultEntity<List<CartItem>, Error>> =
         cartRepository.getCartList(parameters)
             .flatMapConcat {
@@ -43,10 +43,4 @@ data class GetCartListUseCase(
             cartItemMapper.mapToCartItem(preview, hashmap[preview.no]?.toInt() ?: 0)
         }
     }
-
-    data class RequestParam(
-        val userId: String,
-        val page: Int,
-        val perPage: Int
-    ) : com.example.commerceapp.domain.model.common.RequestParam
 }
