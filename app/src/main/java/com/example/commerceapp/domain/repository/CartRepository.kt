@@ -1,12 +1,13 @@
 package com.example.commerceapp.domain.repository
 
+import com.example.commerceapp.domain.model.cart.Cart
 import com.example.commerceapp.domain.model.common.RequestParam
-import com.example.commerceapp.domain.model.product.ProductPreview
-import com.example.commerceapp.domain.response.Response
 import kotlinx.coroutines.flow.Flow
 
-interface CartRepository {
-    fun getCartList(requestParam: RequestParam): Flow<List<ProductPreview>>
-    fun addToCart(requestParam: RequestParam): Flow<Response>
-    fun removeFromCart(requestParam: RequestParam): Flow<Response>
+interface CartRepository<out T : CartRepository.CartRequestParam> {
+    suspend fun <T> getCartList(requestParam: T): Flow<List<Cart>>
+    suspend fun <T> addToCart(requestParam: T): Flow<String>
+    suspend fun <T> removeFromCart(requestParam: T): Flow<String>
+
+    interface CartRequestParam : RequestParam
 }

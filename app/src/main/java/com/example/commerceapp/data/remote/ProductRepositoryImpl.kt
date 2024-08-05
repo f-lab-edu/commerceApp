@@ -10,7 +10,6 @@ import com.example.commerceapp.data.remote.model.mapper.ProductPreviewMapper
 import com.example.commerceapp.domain.model.Brand
 import com.example.commerceapp.domain.model.Category
 import com.example.commerceapp.domain.model.common.DataError
-import com.example.commerceapp.domain.model.common.FireStoreNoDataException
 import com.example.commerceapp.domain.model.common.InvalidDataException
 import com.example.commerceapp.domain.model.common.request.ProductSearchParam
 import com.example.commerceapp.domain.model.product.Product
@@ -60,8 +59,15 @@ class ProductRepositoryImpl @Inject constructor(
         return collectionRef.whereEqualTo("no", id.toLong()).snapshots()
             .mapNotNull { snapshot ->  // null이면 무시
                 snapshot.firstOrNull()?.toObject(ProductDto::class.java)
-                    ?.let { productMapper.mapToProduct(it) } ?: throw InvalidDataException(DataError.VALIDATION.EMPTY)
+                    ?.let { productMapper.mapToProduct(it) }
+                    ?: throw InvalidDataException(DataError.VALIDATION.EMPTY)
             }
+    }
+
+    override suspend fun getProductPreview(lists: List<Long>): Flow<List<ProductPreview>> {
+        return firestore.collection(PRODUCT_COLLECTION_PATH)
+            .whereIn("no", lists).snapshots()
+            .map { convertToProductList(it.toObjects(ProductPreviewDto::class.java)) }
     }
 
     override suspend fun searchCategories(keyword: String): Flow<List<Category>> {

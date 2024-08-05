@@ -16,6 +16,7 @@ interface ProductRepository {
     suspend fun searchBrands(keyword: String): Flow<List<Brand>>
 
     suspend fun getProduct(id: String): Flow<Product>
+    suspend fun getProductPreview(lists: List<Long>): Flow<List<ProductPreview>>
     suspend fun getAllCategory(): Flow<List<Category>>
     suspend fun getAllBrand(): Flow<List<Brand>>
 }
