@@ -9,7 +9,7 @@ import com.example.commerceapp.domain.repository.CartRepository
 import kotlinx.coroutines.flow.Flow
 
 data class AddToCartUseCase(
-    private val repository: CartRepository<RequestParam>,
+    private val repository: CartRepository<CartRepository.CartRequestParam>,
     private val dataErrorHandler: DataErrorHandler
 ) {
     suspend fun invoke(parameters: RequestParam): Flow<ResultEntity<String, Error>> =
